@@ -37,22 +37,31 @@ M.run_request = function(opts)
         return
     end
 
+    print("Parsed request:", vim.inspect(request))  -- Debug output
+
     local env = environment.get_current_env()
     request = parser.replace_placeholders(request, env)
+
+    print("Request after placeholder replacement:", vim.inspect(request))  -- Debug output
 
     http_client.send_request(request, function(response)
         ui.display_response(response)
     end)
 end
 
+M.stop_request = function()
+    local current_request = http_client.get_current_request()
+    if not current_request then
+        print('No active request to stop')
+        return
+    end
+    http_client.stop_request()
+    print('HTTP request stopped')
+end
+
 M.set_verbose_mode = function(enabled)
     http_client.set_verbose_mode(enabled)
     print(string.format("Verbose mode %s", enabled and "enabled" or "disabled"))
-end
-
-M.stop_request = function()
-    http_client.stop_request()
-    print('HTTP request stopped')
 end
 
 M.dry_run = function()

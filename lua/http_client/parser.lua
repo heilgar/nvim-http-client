@@ -13,6 +13,7 @@ M.get_request_under_cursor = function()
     end
 
     local request_lines = vim.list_slice(lines, start_line, end_line)
+    print("Request lines:", vim.inspect(request_lines))  -- Debug output
     return M.parse_request(request_lines)
 end
 
@@ -42,6 +43,7 @@ M.parse_request = function(lines)
         end
     end
 
+    print("Parsed request:", vim.inspect(request))  -- Debug output
     return request
 end
 
@@ -60,6 +62,7 @@ M.replace_placeholders = function(request, env)
         request.body = replace(request.body)
     end
 
+    print("Request after placeholder replacement:", vim.inspect(request))  -- Debug output
     return request
 end
 
