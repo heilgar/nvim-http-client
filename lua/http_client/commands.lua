@@ -52,15 +52,25 @@ M.run_request = function(opts)
         ui.display_response(response)
     end)
 end
-
 M.stop_request = function()
     local current_request = http_client.get_current_request()
     if not current_request then
         print('No active request to stop')
         return
     end
-    http_client.stop_request()
-    print('HTTP request stopped')
+
+    local success, error = pcall(function()
+        http_client.stop_request()
+    end)
+
+    if success then
+        print('HTTP request stopped successfully')
+    else
+        print('Error stopping HTTP request: ' .. tostring(error))
+    end
+
+    -- Cleanup
+    http_client.clear_current_request()
 end
 
 M.set_verbose_mode = function(enabled)
