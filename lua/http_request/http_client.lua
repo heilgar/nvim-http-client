@@ -1,5 +1,6 @@
 local M = {}
 local curl = require('plenary.curl')
+local ui = require('http_request.ui')
 
 local current_request = nil
 
@@ -16,7 +17,10 @@ M.send_request = function(request, callback)
         headers = request.headers,
         callback = function(response)
             current_request = nil
-            callback(response)
+            ui.display_response(response)
+            if callback then
+                callback(response)
+            end
         end
     })
 end
