@@ -58,7 +58,7 @@ function M.setup(opts)
 
     vim.api.nvim_create_user_command('HttpEnv', function()
         M.commands.select_env()
-    end, { nargs = 1 })
+    end, {})
 
     vim.api.nvim_create_user_command('HttpRun', function(cmd_opts)
         if cmd_opts.args == "-v" then
