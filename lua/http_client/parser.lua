@@ -1,6 +1,6 @@
 local M = {}
 
-M.get_request_under_cursor = function()
+M.get_request_under_cursor = function(verbose)
     local current_line = vim.api.nvim_win_get_cursor(0)[1]
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 
@@ -13,11 +13,14 @@ M.get_request_under_cursor = function()
     end
 
     local request_lines = vim.list_slice(lines, start_line, end_line)
-    print("Request lines:", vim.inspect(request_lines))  -- Debug output
+
+    if verbose then
+        print("Request lines:", vim.inspect(request_lines)) -- Debug output
+    end
     return M.parse_request(request_lines)
 end
 
-M.parse_request = function(lines)
+M.parse_request = function(lines, verbose)
     local request = {
         method = nil,
         url = nil,
@@ -43,11 +46,14 @@ M.parse_request = function(lines)
         end
     end
 
-    print("Parsed request:", vim.inspect(request))  -- Debug output
+    if verbose then
+        print("Parsed request:", vim.inspect(request)) -- Debug output
+    end
+
     return request
 end
 
-M.replace_placeholders = function(request, env)
+M.replace_placeholders = function(request, env, verbose)
     local function replace(str)
         return (str:gsub("{{(.-)}}", function(var)
             return env[var] or "{{" .. var .. "}}"
@@ -62,7 +68,10 @@ M.replace_placeholders = function(request, env)
         request.body = replace(request.body)
     end
 
-    print("Request after placeholder replacement:", vim.inspect(request))  -- Debug output
+    if verbose then
+        print("Request after placeholder replacement:", vim.inspect(request)) -- Debug output
+    end
+
     return request
 end
 
