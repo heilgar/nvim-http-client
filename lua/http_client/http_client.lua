@@ -7,7 +7,7 @@ local verbose_mode = false
 
 local function debug_print(message)
     if verbose_mode then
-        vim.api.nvim_echo({ { string.format("[HTTP Client Debug] %s", message), "WarningMsg" } }, true, {})
+        print(string.format("[HTTP Client Debug] %s", message))
     end
 end
 
@@ -47,7 +47,7 @@ M.send_request = function(request, callback)
             debug_print(string.format("Status: %s", response.status))
             debug_print("Response headers:")
             for k, v in pairs(response.headers) do
-                debug_print(string.format("  %s: %s", k, v))
+                debug_print(string.format("%s", v))
             end
 
             current_request = nil

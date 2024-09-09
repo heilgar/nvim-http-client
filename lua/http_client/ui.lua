@@ -50,21 +50,17 @@ function M.prepare_response(response)
     end
     table.insert(lines, "")
     table.insert(lines, "Body:")
-
     local content_type = detect_content_type(response.headers or {})
     local formatted_body = response.body or ""
-
     if content_type == "json" then
         formatted_body = format_json(formatted_body)
     elseif content_type == "xml" then
         formatted_body = format_xml(formatted_body)
     end
-
     for line in formatted_body:gmatch("[^\r\n]+") do
         table.insert(lines, line)
     end
-
-    return lines
+    return { lines = lines, filetype = content_type }
 end
 
 function M.display_response(prepared_response)
