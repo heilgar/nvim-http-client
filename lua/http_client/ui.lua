@@ -46,7 +46,7 @@ function M.prepare_response(response)
     table.insert(lines, "")
     table.insert(lines, "Headers:")
     for k, v in pairs(response.headers or {}) do
-        table.insert(lines, k .. ": " .. v)
+        table.insert(lines, string.format("%s: %s", k, v))
     end
     table.insert(lines, "")
     table.insert(lines, "Body:")
