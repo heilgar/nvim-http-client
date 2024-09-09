@@ -13,6 +13,17 @@ M.config = {
     },
 }
 
+local function setup_syntax()
+    -- Create an augroup for your plugin
+    vim.api.nvim_exec([[
+        augroup HttpClientSyntax
+            autocmd!
+            autocmd BufNewFile,BufRead *.http set filetype=http
+            autocmd FileType http lua require('http_client').apply_syntax()
+        augroup END
+    ]], false)
+end
+
 
 local function setup_docs()
     if vim.fn.has("nvim-0.7") == 1 then
@@ -40,6 +51,23 @@ local function set_keybindings()
             vim.keymap.set('n', M.config.keybindings.toggle_verbose, ':HttpVerbose<CR>', opts)
         end
     })
+end
+
+-- TODO: Move to file
+function M.apply_syntax()
+    vim.cmd([[
+        syntax match HttpMethod "\v^(GET|POST|PUT|DELETE|PATCH|OPTIONS|HEAD)"
+        syntax match HttpUrl "\vhttps?://[^\s]+"
+        syntax match HttpHeader "\v^[\w-]+: .+"
+        syntax match HttpJson "\v{\_.{-}}"
+        syntax match HttpXml "\v<\w+>(.|\n)*?</\w+>"
+
+        highlight link HttpMethod Keyword
+        highlight link HttpUrl String
+        highlight link HttpHeader Type
+        highlight link HttpJson PreProc
+        highlight link HttpXml PreProc
+    ]])
 end
 
 function M.setup(opts)
@@ -87,6 +115,18 @@ function M.setup(opts)
 
     setup_docs()
     set_keybindings()
+
+    -- Get the directory of the current Lua file
+    -- local script_path = debug.getinfo(1, "S").source:sub(2) -- remove the leading '@'
+    -- local script_dir = vim.fn.fnamemodify(script_path, ":p:h")
+
+    -- Construct the path to your syntax file
+    -- local syntax_file = vim.fn.fnamemodify(script_dir .. '/syntax/http.vim', ':p')
+
+    -- Source the syntax file
+    -- vim.cmd('source ' .. syntax_file)
+
+    setup_syntax()
 end
 
 return M
