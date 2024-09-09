@@ -40,46 +40,51 @@ local function format_xml(body)
     return formatted
 end
 
-function M.display_response(response)
+function M.prepare_response(response)
+    local lines = {}
+    table.insert(lines, "Status: " .. response.status)
+    table.insert(lines, "")
+    table.insert(lines, "Headers:")
+    for k, v in pairs(response.headers) do
+        table.insert(lines, k .. ": " .. v)
+    end
+    table.insert(lines, "")
+    table.insert(lines, "Body:")
+
+    local content_type = detect_content_type(response.headers)
+    local formatted_body = response.body
+
+    if content_type == "json" then
+        formatted_body = format_json(response.body)
+    elseif content_type == "xml" then
+        formatted_body = format_xml(response.body)
+    end
+
+    for line in formatted_body:gmatch("[^\r\n]+") do
+        table.insert(lines, line)
+    end
+
+    return { lines = lines, filetype = content_type }
+end
+
+function M.display_response(prepared_response)
     vim.schedule(function()
+        -- Move buffer creation inside vim.schedule
         local buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
         vim.api.nvim_buf_set_option(buf, 'swapfile', false)
         vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
 
-        local lines = {}
-        table.insert(lines, "Status: " .. response.status)
-        table.insert(lines, "")
-        table.insert(lines, "Headers:")
-        for k, v in pairs(response.headers) do
-            table.insert(lines, k .. ": " .. v)
-        end
-        table.insert(lines, "")
-        table.insert(lines, "Body:")
-
-        local content_type = detect_content_type(response.headers)
-        local formatted_body = response.body
-
-        if content_type == "json" then
-            formatted_body = format_json(response.body)
-            vim.api.nvim_buf_set_option(buf, 'filetype', 'json')
-        elseif content_type == "xml" then
-            formatted_body = format_xml(response.body)
-            vim.api.nvim_buf_set_option(buf, 'filetype', 'xml')
-        elseif content_type == "html" then
-            vim.api.nvim_buf_set_option(buf, 'filetype', 'html')
-        end
-
-        for line in formatted_body:gmatch("[^\r\n]+") do
-            table.insert(lines, line)
-        end
-
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+        -- Set buffer lines
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, prepared_response.lines)
 
         -- Open in a new tab
         vim.cmd('tabnew')
         local win = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_buf(win, buf)
+
+        -- Set filetype for syntax highlighting
+        vim.api.nvim_buf_set_option(buf, 'filetype', prepared_response.filetype)
 
         -- Apply syntax highlighting
         vim.cmd('syntax on')
