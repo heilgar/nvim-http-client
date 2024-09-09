@@ -90,29 +90,28 @@ To customize these keybindings, you can add the following to your Neovim configu
 
 ```lua
 {
-  "heilgar/nvim-http-request",
-  dependencies = {
-    "nvim-lua/plenary.nvim",
-  },
-  config = function()
-    require("http_request").setup({
-      -- Optional: Configure default options here
-      default_env_file = '.env.json',
-      request_timeout = 30000, -- 30 seconds
-      keybindings = {
-        select_env_file = "<leader>he",
-        set_env = "<leader>hs",
-        run_request = "<leader>hr",
-        stop_request = "<leader>hx",
-      },
-    })
-  end,
-  keys = {
-    { "<leader>he", desc = "Select HTTP environment file" },
-    { "<leader>hs", desc = "Set HTTP environment" },
-    { "<leader>hr", desc = "Run HTTP request" },
-    { "<leader>hx", desc = "Stop HTTP request" },
-  },
+    "heilgar/nvim-http-request",
+    dependencies = {
+        "nvim-lua/plenary.nvim",
+    },
+    config = function()
+        require("http_request").setup()
+    end,
+    event = "VeryLazy",
+    keys = {
+        { "<leader>he", "<cmd>HttpEnvFile<cr>", desc = "Select HTTP environment file" },
+        { "<leader>hs", "<cmd>HttpEnv<cr>", desc = "Set HTTP environment" },
+        { "<leader>hr", "<cmd>HttpRun<cr>", desc = "Run HTTP request" },
+        { "<leader>hx", "<cmd>HttpStop<cr>", desc = "Stop HTTP request" },
+    },
+    cmd = {
+        "HttpEnvFile",
+        "HttpEnv",
+        "HttpRun",
+        "HttpStop",
+        "HttpDebug",
+        "HttpDryRun"
+    },
 }
 ```
 
@@ -120,7 +119,7 @@ You can change the key mappings by modifying the `keybindings` table in the setu
 
 ## Documentation
 
-After installing the plugin, you can access the full documentation by running `:help http_request` in Neovim.
+After installing the plugin, you can access the full documentation by running `:h http-request-usage` in Neovim.
 
 ## Environment Files
 

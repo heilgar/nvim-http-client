@@ -48,8 +48,8 @@ function M.setup(opts)
     M.http_client = require('http_request.http_client')
     M.parser = require('http_request.parser')
     M.ui = require('http_request.ui')
-    M.debug = require('http_request.debug')
     M.dry_run = require('http_request.dry_run')
+
     -- Set up commands
     vim.api.nvim_create_user_command('HttpEnvFile', function()
         M.commands.select_env_file()
@@ -59,16 +59,29 @@ function M.setup(opts)
         M.commands.set_env(params.args)
     end, { nargs = 1 })
 
-    vim.api.nvim_create_user_command('HttpRun', function()
+    vim.api.nvim_create_user_command('HttpRun', function(opts)
+        if opts.args == "-v" then
+            M.http_client.set_verbose_mode(true)
+        else
+            M.http_client.set_verbose_mode(false)
+        end
         M.commands.run_request()
-    end, {})
+    end, { nargs = '?' })
+
+    vim.api.nvim_create_user_command('HttpVerbose', function(opts)
+        if opts.args == "on" then
+            M.http_client.set_verbose_mode(true)
+            print("HTTP Client verbose mode enabled")
+        elseif opts.args == "off" then
+            M.http_client.set_verbose_mode(false)
+            print("HTTP Client verbose mode disabled")
+        else
+            print("Usage: HttpVerbose on|off")
+        end
+    end, { nargs = 1, complete = function(_, _, _) return { "on", "off" } end })
 
     vim.api.nvim_create_user_command('HttpStop', function()
         M.commands.stop_request()
-    end, {})
-
-    vim.api.nvim_create_user_command('HttpDebug', function()
-        M.debug.display_debug_info(M)
     end, {})
 
     vim.api.nvim_create_user_command('HttpDryRun', function()
