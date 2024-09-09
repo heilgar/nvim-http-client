@@ -71,8 +71,6 @@ function M.setup(opts)
         M.debug.display_debug_info(M)
     end, {})
 
-
-
     setup_docs()
     set_keybindings()
 end
