@@ -5,6 +5,7 @@ local http_client = require('http_client.http_client')
 local parser = require('http_client.parser')
 local ui = require('http_client.ui')
 local dry_run = require('http_client.dry_run')
+local vvv = require('http_client.verbose')
 
 local config = {}
 
@@ -81,11 +82,11 @@ M.select_env = function()
     end)
 end
 
-M.run_request = function(opts)
-    local verbose = http_client.get_verbose_mode()
-    http_client.set_verbose_mode(verbose)
+M.run_request = function()
+    local verbose = vvv.get_verbose_mode()
+    vvv.set_verbose_mode(verbose)
 
-    local request = parser.get_request_under_cursor(verbose)
+    local request = parser.get_request_under_cursor()
     if not request then
         print('\nNo valid HTTP request found under cursor')
         return
@@ -127,8 +128,8 @@ M.stop_request = function()
 end
 
 M.toggle_verbose_mode = function()
-    local current_state = http_client.get_verbose_mode()
-    http_client.set_verbose_mode(not current_state)
+    local current_state = vvv.get_verbose_mode()
+    vvv.set_verbose_mode(not current_state)
     print(string.format("HTTP Client verbose mode %s", not current_state and "enabled" or "disabled"))
 end
 

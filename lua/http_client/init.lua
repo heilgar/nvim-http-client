@@ -53,6 +53,7 @@ function M.setup(opts)
     M.ui = require('http_client.ui')
     M.dry_run = require('http_client.dry_run')
     M.commands = require('http_client.commands').setup(M.config)
+    M.v = require('http_client.verbose')
 
 
     -- Set up commands
@@ -64,18 +65,13 @@ function M.setup(opts)
         M.commands.select_env()
     end, {})
 
-    vim.api.nvim_create_user_command('HttpRun', function(cmd_opts)
-        if cmd_opts.args == "-v" then
-            M.http_client.set_verbose_mode(true)
-        else
-            M.http_client.set_verbose_mode(false)
-        end
+    vim.api.nvim_create_user_command('HttpRun', function()
         M.commands.run_request()
-    end, { nargs = '?' })
+    end, {})
 
     vim.api.nvim_create_user_command('HttpVerbose', function()
-        local current_state = M.http_client.get_verbose_mode()
-        M.http_client.set_verbose_mode(not current_state)
+        local current_state = M.v.get_verbose_mode()
+        M.v.set_verbose_mode(not current_state)
         print(string.format("HTTP Client verbose mode %s", not current_state and "enabled" or "disabled"))
     end, {})
 
