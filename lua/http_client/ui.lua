@@ -15,9 +15,9 @@ local function detect_content_type(headers)
 end
 
 local function format_json(body)
-    local ok, parsed = pcall(vim.json.decode, body)
+    local ok, parsed = pcall(vim.fn.json_decode, body)
     if ok then
-        return vim.json.encode(parsed, { indent = 2 })
+        return vim.fn.json_encode(parsed)
     end
     return body
 end
@@ -40,11 +40,8 @@ local function format_xml(body)
 end
 
 local function format_headers(headers)
-    if type(headers) ~= "table" then
-        return tostring(headers or "No headers")
-    end
     local formatted = {}
-    for k, v in pairs(headers) do
+    for k, v in pairs(headers or {}) do
         table.insert(formatted, string.format("%s: %s", k, v))
     end
     return table.concat(formatted, "\n")
