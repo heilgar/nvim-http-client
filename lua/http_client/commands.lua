@@ -31,18 +31,22 @@ M.run_request = function(opts)
     local verbose = opts and opts.verbose or false
     http_client.set_verbose_mode(verbose)
 
-    local request = parser.get_request_under_cursor()
+    local request = parser.get_request_under_cursor(verbose)
     if not request then
         print('No valid HTTP request found under cursor')
         return
     end
 
-    print("Parsed request:", vim.inspect(request))  -- Debug output
+    if verbose then
+        print("Parsed request:", vim.inspect(request)) -- Debug output
+    end
 
     local env = environment.get_current_env()
-    request = parser.replace_placeholders(request, env)
+    request = parser.replace_placeholders(request, env, verbose)
 
-    print("Request after placeholder replacement:", vim.inspect(request))  -- Debug output
+    if verbose then
+        print("Request after placeholder replacement:", vim.inspect(request)) -- Debug output
+    end
 
     http_client.send_request(request, function(response)
         ui.display_response(response)

@@ -44,12 +44,6 @@ M.send_request = function(request, callback)
         headers = request.headers,
         callback = function(response)
             debug_print("Response received")
-            debug_print(string.format("Status: %s", response.status))
-            debug_print("Response headers:")
-            for k, v in pairs(response.headers) do
-                debug_print(string.format("%s", v))
-            end
-
             current_request = nil
             local prepared_response = ui.prepare_response(response)
             ui.display_response(prepared_response)
@@ -64,11 +58,11 @@ end
 
 M.stop_request = function()
     if current_request then
-        debug_print("Stopping current request")
+        print("Stopping current request")
         current_request:shutdown()
         current_request = nil
     else
-        debug_print("No active request to stop")
+        print("No active request to stop")
     end
 end
 
