@@ -1,7 +1,7 @@
-http_client.txt A Neovim plugin for running HTTP requests from .http files
+*http_client.txt* A Neovim plugin for running HTTP requests from .http files
 
 ==============================================================================
-USAGE                                                    *http-request-usage*
+USAGE                                                    *http_client-usage*
 
 This plugin allows you to run HTTP requests directly from .http files, with
 support for environment variables.
@@ -11,7 +11,7 @@ support for environment variables.
 3. Use the provided commands to select an environment and run requests.
 
 ------------------------------------------------------------------------------
-COMMANDS                                              *http-request-commands*
+COMMANDS                                              *http_client-commands*
 
 :HttpEnvFile                                                   *:HttpEnvFile*
     Select an environment file (.env.json) to use.
@@ -25,40 +25,53 @@ COMMANDS                                              *http-request-commands*
 :HttpStop                                                         *:HttpStop*
     Stop the currently running HTTP request.
 
+:HttpVerbose                                                   *:HttpVerbose*
+    Toggle verbose mode for debugging.
+
+:HttpDryRun                                                     *:HttpDryRun*
+    Perform a dry run of the request under the cursor.
+
 ------------------------------------------------------------------------------
-KEYBINDINGS                                        *http-request-keybindings*
+KEYBINDINGS                                        *http_client-keybindings*
 
 The plugin comes with the following default keybindings:
 
-<leader>he                                       *http-request-select-env-file*
+<leader>he                                       *http_client-select-env-file*
     Select environment file
 
-<leader>hs                                            *http-request-set-env*
+<leader>hs                                            *http_client-set-env*
     Set current environment
 
-<leader>hr                                            *http-request-run*
+<leader>hr                                            *http_client-run*
     Run HTTP request under cursor
 
-<leader>hx                                            *http-request-stop*
+<leader>hx                                            *http_client-stop*
     Stop running HTTP request
+
+<leader>hv                                            *http_client-verbose*
+    Toggle verbose mode
+
+<leader>hd                                            *http_client-dry-run*
+    Perform dry run
 
 To customize these keybindings, you can pass a 'keybindings' table to the
 setup function in your Neovim configuration:
 >
-    require("http_request").setup({
+    require("http_client").setup({
       keybindings = {
         select_env_file = "<leader>he",
         set_env = "<leader>hs",
         run_request = "<leader>hr",
         stop_request = "<leader>hx",
+        toggle_verbose = "<leader>hv",
+        dry_run = "<leader>hd",
       },
     })
 <
 Replace the key combinations with your preferred bindings.
 
-
 ------------------------------------------------------------------------------
-EXAMPLE .http FILE                                 *http-request-example-http*
+EXAMPLE .http FILE                                 *http_client-example-http*
 >
     GET {{host}}/api/users
 
@@ -74,7 +87,7 @@ EXAMPLE .http FILE                                 *http-request-example-http*
 <
 
 ------------------------------------------------------------------------------
-EXAMPLE .env.json FILE                             *http-request-example-env*
+EXAMPLE .env.json FILE                             *http_client-example-env*
 >
     {
         "*default": {
@@ -87,7 +100,7 @@ EXAMPLE .env.json FILE                             *http-request-example-env*
 <
 
 ------------------------------------------------------------------------------
-ENVIRONMENT FILES                            *http-request-environment-files*
+ENVIRONMENT FILES                            *http_client-environment-files*
 
 Environment files (.env.json) allow you to define different sets of variables
 for your HTTP requests. The plugin will look for these files in your project
