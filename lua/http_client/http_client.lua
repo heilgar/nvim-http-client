@@ -83,6 +83,10 @@ M.stop_request = function()
     end
 end
 
+M.clear_current_request = function()
+    current_request = nil
+end
+
 M.get_current_request = function()
     return current_request
 end
