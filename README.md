@@ -20,12 +20,12 @@ Add the following to your Neovim configuration:
 
 ```lua
 {
-  "heilgar/nvim-http-request",
+  "heilgar/nvim-http-client",
   dependencies = {
     "nvim-lua/plenary.nvim",
   },
   config = function()
-    require("http_request").setup({
+    require("http_client").setup({
       -- Optional: Configure default options here
       default_env_file = '.env.json',
       request_timeout = 30000, -- 30 seconds
@@ -90,12 +90,12 @@ To customize these keybindings, you can add the following to your Neovim configu
 
 ```lua
 {
-    "heilgar/nvim-http-request",
+    "heilgar/nvim-http-client",
     dependencies = {
         "nvim-lua/plenary.nvim",
     },
     config = function()
-        require("http_request").setup()
+        require("http_client").setup()
     end,
     event = "VeryLazy",
     keys = {
@@ -119,7 +119,7 @@ You can change the key mappings by modifying the `keybindings` table in the setu
 
 ## Documentation
 
-After installing the plugin, you can access the full documentation by running `:h http-request-usage` in Neovim.
+After installing the plugin, you can access the full documentation by running `:h http-client-usage` in Neovim.
 
 ## Environment Files
 
