@@ -40,8 +40,7 @@ local function format_xml(body)
     return formatted
 end
 
-
-local function display_in_buffer(content, title)
+function M.display_in_buffer(content, title)
     vim.schedule(function()
         -- Create a new buffer
         local buf = vim.api.nvim_create_buf(false, true)
@@ -50,7 +49,8 @@ local function display_in_buffer(content, title)
         vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
 
         -- Set buffer name
-        vim.api.nvim_buf_set_name(buf, title)
+        local buf_name = title .. ' ' .. os.time()
+        pcall(vim.api.nvim_buf_set_name, buf, buf_name)
 
         -- Set buffer content
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(content, '\n'))
@@ -110,7 +110,7 @@ Body (%s):
 end
 
 function M.display_response(prepared_response)
-    display_in_buffer(prepared_response, "HTTP Response")
+    M.display_in_buffer(prepared_response, "HTTP Response")
 end
 
 return M
