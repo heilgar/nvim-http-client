@@ -1,26 +1,26 @@
 local M = {}
 
-M.get_request_under_cursor = function(verbose)
+local function trim(s)
+    return s:match("^%s*(.-)%s*$")
+end
+
+M.get_request_under_cursor = function()
     local current_line = vim.api.nvim_win_get_cursor(0)[1]
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
 
     local start_line, end_line = current_line, current_line
-    while start_line > 1 and lines[start_line - 1] ~= '###' do
+    while start_line > 1 and trim(lines[start_line - 1]) ~= '###' do
         start_line = start_line - 1
     end
-    while end_line < #lines and lines[end_line + 1] ~= '###' do
+    while end_line < #lines and trim(lines[end_line + 1]) ~= '###' do
         end_line = end_line + 1
     end
 
     local request_lines = vim.list_slice(lines, start_line, end_line)
-
-    if verbose then
-        print("Request lines:", vim.inspect(request_lines)) -- Debug output
-    end
     return M.parse_request(request_lines)
 end
 
-M.parse_request = function(lines, verbose)
+M.parse_request = function(lines)
     local request = {
         method = nil,
         url = nil,
@@ -28,39 +28,53 @@ M.parse_request = function(lines, verbose)
         body = nil
     }
 
-    local in_body = false
-    for i, line in ipairs(lines) do
-        if i == 1 then
-            local method, url = line:match("(%S+)%s+(.+)")
-            request.method = method
-            request.url = url
-        elseif line:match("^%s*$") then
-            in_body = true
-        elseif not in_body then
-            local key, value = line:match("([^:]+):%s*(.+)")
-            if key and value then
-                request.headers[key] = value
+    local stage = "start"
+    local body_lines = {}
+
+    for _, line in ipairs(lines) do
+        line = trim(line)
+        if line == "" then
+            if stage == "headers" then
+                stage = "body"
             end
-        else
-            request.body = (request.body or "") .. line .. "\n"
+        elseif stage == "start" then
+            local method, url = line:match("^(%S+)%s+(.+)$")
+            if method and url then
+                request.method = method
+                request.url = url
+                stage = "headers"
+            end
+        elseif stage == "headers" then
+            local key, value = line:match("^([^:]+):%s*(.+)$")
+            if key and value then
+                request.headers[trim(key)] = trim(value)
+            end
+        elseif stage == "body" then
+            table.insert(body_lines, line)
         end
     end
 
-    if verbose then
-        print("Parsed request:", vim.inspect(request)) -- Debug output
+    if #body_lines > 0 then
+        request.body = table.concat(body_lines, "\n")
     end
 
+    -- print("Parsed request:", vim.inspect(request)) -- Debug output
     return request
 end
 
-M.replace_placeholders = function(request, env, verbose)
+M.replace_placeholders = function(request, env)
     local function replace(str)
+        if str == nil then
+            return nil
+        end
         return (str:gsub("{{(.-)}}", function(var)
             return env[var] or "{{" .. var .. "}}"
         end))
     end
 
-    request.url = replace(request.url)
+    if request.url then
+        request.url = replace(request.url)
+    end
     for k, v in pairs(request.headers) do
         request.headers[k] = replace(v)
     end
@@ -68,10 +82,7 @@ M.replace_placeholders = function(request, env, verbose)
         request.body = replace(request.body)
     end
 
-    if verbose then
-        print("Request after placeholder replacement:", vim.inspect(request)) -- Debug output
-    end
-
+    -- print("Request after placeholder replacement:", vim.inspect(request)) -- Debug output
     return request
 end
 
