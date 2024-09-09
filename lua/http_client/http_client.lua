@@ -16,7 +16,11 @@ M.set_verbose_mode = function(enabled)
     debug_print(string.format("Verbose mode %s", enabled and "enabled" or "disabled"))
 end
 
-M.send_request = function(request, callback)
+M.get_verbose_mode = function()
+    return verbose_mode
+end
+
+M.send_request = function(request)
     debug_print("Sending request...")
     debug_print(string.format("Method: %s, URL: %s", request.method, request.url))
 
@@ -57,11 +61,6 @@ M.send_request = function(request, callback)
             debug_print("Calling ui.display_response")
             local pr = ui.prepare_response(response)
             ui.display_response(pr)
-
-            if callback then
-                debug_print("Calling user-provided callback")
-                callback(response)
-            end
         end
     })
 

@@ -39,28 +39,16 @@ local function format_xml(body)
     return formatted
 end
 
-function M.format_headers(headers)
-    if type(headers) == "string" then
-        local lines = vim.split(headers, "\n")
-        local formatted = {}
-        for _, line in ipairs(lines) do
-            local header = line:gsub("^%d+:%s*", "")
-            if header ~= "" then
-                table.insert(formatted, header)
-            end
-        end
-        return table.concat(formatted, "\n")
-    elseif type(headers) == "table" then
-        local formatted = {}
-        for k, v in pairs(headers) do
-            table.insert(formatted, string.format("%s: %s", k, v))
-        end
-        return table.concat(formatted, "\n")
-    else
-        return "No headers"
+local function format_headers(headers)
+    if type(headers) ~= "table" then
+        return tostring(headers or "No headers")
     end
+    local formatted = {}
+    for k, v in pairs(headers) do
+        table.insert(formatted, string.format("%s: %s", k, v))
+    end
+    return table.concat(formatted, "\n")
 end
-
 
 function M.display_in_buffer(content, title)
     vim.schedule(function()
@@ -115,7 +103,7 @@ Body (%s):
 %s
 ]],
         response.status or "N/A",
-        M.format_headers(response.headers),
+        format_headers(response.headers),
         content_type,
         formatted_body
     )
