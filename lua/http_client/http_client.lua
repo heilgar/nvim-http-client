@@ -1,6 +1,6 @@
 local M = {}
 local curl = require('plenary.curl')
-local ui = require('http_request.ui')
+local ui = require('http_client.ui')
 
 local current_request = nil
 local verbose_mode = false
