@@ -15,30 +15,52 @@ local function detect_content_type(headers)
 end
 
 local function format_json(body)
-    local ok, parsed = pcall(vim.fn.json_decode, body)
+    local ok, parsed = pcall(vim.json.decode, body)
     if ok then
-        return vim.fn.json_encode(parsed)
+        return vim.json.encode(parsed, { indent = 2 })
     end
     return body
 end
 
 local function format_xml(body)
-    -- This is a simple XML formatter.
     local formatted = body:gsub("><", ">\n<")
     local indent = 0
     formatted = formatted:gsub("([^>]*>)", function(tag)
-        local result = string.rep("  ", indent) .. tag
+        local result
         if tag:match("^</") then
             indent = indent - 1
-        elseif tag:match("/>$") then
-            -- Do nothing
-        elseif not tag:match("^<!") then
+        end
+        result = string.rep("  ", indent) .. tag
+        if not tag:match("/>$") and not tag:match("^</") then
             indent = indent + 1
         end
         return result
     end)
     return formatted
 end
+
+function M.format_headers(headers)
+    if type(headers) == "string" then
+        local lines = vim.split(headers, "\n")
+        local formatted = {}
+        for _, line in ipairs(lines) do
+            local header = line:gsub("^%d+:%s*", "")
+            if header ~= "" then
+                table.insert(formatted, header)
+            end
+        end
+        return table.concat(formatted, "\n")
+    elseif type(headers) == "table" then
+        local formatted = {}
+        for k, v in pairs(headers) do
+            table.insert(formatted, string.format("%s: %s", k, v))
+        end
+        return table.concat(formatted, "\n")
+    else
+        return "No headers"
+    end
+end
+
 
 function M.display_in_buffer(content, title)
     vim.schedule(function()
@@ -69,14 +91,6 @@ function M.display_in_buffer(content, title)
         vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', opts)
         vim.api.nvim_buf_set_keymap(buf, 'n', '<Esc>', ':close<CR>', opts)
     end)
-end
-
-function M.format_headers(headers)
-    local formatted = {}
-    for k, v in pairs(headers or {}) do
-        table.insert(formatted, string.format("%s: %s", k, v))
-    end
-    return table.concat(formatted, "\n")
 end
 
 function M.prepare_response(response)
