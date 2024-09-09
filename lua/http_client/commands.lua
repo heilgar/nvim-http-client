@@ -1,10 +1,10 @@
 local M = {}
-local environment = require('http_request.environment')
-local file_utils = require('http_request.file_utils')
-local http_client = require('http_request.http_client')
-local parser = require('http_request.parser')
-local ui = require('http_request.ui')
-local dry_run = require('http_request.dry_run')
+local environment = require('http_client.environment')
+local file_utils = require('http_client.file_utils')
+local http_client = require('http_client.http_client')
+local parser = require('http_client.parser')
+local ui = require('http_client.ui')
+local dry_run = require('http_client.dry_run')
 
 M.select_env_file = function()
     local files = file_utils.find_files('*.env.json')

@@ -15,8 +15,8 @@ M.config = {
 local function setup_docs()
     if vim.fn.has("nvim-0.7") == 1 then
         vim.api.nvim_create_autocmd("BufWinEnter", {
-            group = vim.api.nvim_create_augroup("http_request_docs", {}),
-            pattern = "*/http_request/doc/*.txt",
+            group = vim.api.nvim_create_augroup("http_client_docs", {}),
+            pattern = "*/http_client/doc/*.txt",
             callback = function()
                 vim.cmd("silent! helptags " .. vim.fn.expand("%:p:h"))
             end,
@@ -42,13 +42,13 @@ function M.setup(opts)
     M.config = vim.tbl_deep_extend("force", M.config, opts or {})
 
     -- Load all necessary modules
-    M.commands = require('http_request.commands')
-    M.environment = require('http_request.environment')
-    M.file_utils = require('http_request.file_utils')
-    M.http_client = require('http_request.http_client')
-    M.parser = require('http_request.parser')
-    M.ui = require('http_request.ui')
-    M.dry_run = require('http_request.dry_run')
+    M.commands = require('http_client.commands')
+    M.environment = require('http_client.environment')
+    M.file_utils = require('http_client.file_utils')
+    M.http_client = require('http_client.http_client')
+    M.parser = require('http_client.parser')
+    M.ui = require('http_client.ui')
+    M.dry_run = require('http_client.dry_run')
 
     -- Set up commands
     vim.api.nvim_create_user_command('HttpEnvFile', function()

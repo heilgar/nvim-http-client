@@ -10,19 +10,19 @@ local function find_buffer_by_name(name)
 end
 
 
-function M.display_dry_run(http_request)
-    local request = http_request.parser.get_request_under_cursor()
+function M.display_dry_run(http_client)
+    local request = http_client.parser.get_request_under_cursor()
     if not request then
         print('No valid HTTP request found under cursor')
         return
     end
 
-    local env = http_request.environment.get_current_env()
-    request = http_request.parser.replace_placeholders(request, env)
+    local env = http_client.environment.get_current_env()
+    request = http_client.parser.replace_placeholders(request, env)
 
-    local env_file = http_request.environment.get_current_env_file() or "Not set"
+    local env_file = http_client.environment.get_current_env_file() or "Not set"
     local env_info = vim.inspect(env or {})
-    local current_request = vim.inspect(http_request.http_client.get_current_request() or {})
+    local current_request = vim.inspect(http_client.http_client.get_current_request() or {})
 
     local dry_run_info = string.format([[
 Dry Run Information:

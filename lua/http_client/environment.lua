@@ -1,5 +1,5 @@
 local M = {}
-local file_utils = require('http_request.file_utils')
+local file_utils = require('http_client.file_utils')
 
 local current_env_file = nil
 local current_env = nil
