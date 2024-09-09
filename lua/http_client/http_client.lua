@@ -37,7 +37,12 @@ end
 local function format_json(body)
     local ok, parsed = pcall(vim.fn.json_decode, body)
     if ok then
-        return vim.fn.json_encode(parsed):gsub(',"', ',\n  "'):gsub('{', '{\n  '):gsub('}', '\n}')
+        return vim.fn.json_encode(parsed):gsub(',%s*', ',\n  ')
+                                         :gsub('{%s*', '{\n  ')
+                                         :gsub('}%s*', '\n}')
+                                         :gsub('%[%s*', '[\n  ')
+                                         :gsub(']%s*', '\n]')
+                                         :gsub(':%s*', ': ')
     end
     return body
 end
