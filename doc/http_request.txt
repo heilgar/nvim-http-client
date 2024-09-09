@@ -1,4 +1,4 @@
-A Neovim plugin for running HTTP requests from .http files
+http_request.txt A Neovim plugin for running HTTP requests from .http files
 
 ==============================================================================
 USAGE                                                    *http-request-usage*
