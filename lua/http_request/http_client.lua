@@ -17,7 +17,8 @@ M.send_request = function(request, callback)
         headers = request.headers,
         callback = function(response)
             current_request = nil
-            ui.display_response(response)
+            local prepared_response = ui.prepare_response(response)
+            ui.display_response(prepared_response)
             if callback then
                 callback(response)
             end
