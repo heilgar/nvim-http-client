@@ -82,7 +82,7 @@ M.select_env = function()
 end
 
 M.run_request = function(opts)
-    local verbose = opts and opts.verbose or false
+    local verbose = http_client.get_verbose_mode()
     http_client.set_verbose_mode(verbose)
 
     local request = parser.get_request_under_cursor(verbose)
@@ -96,7 +96,7 @@ M.run_request = function(opts)
     end
 
     local env = environment.get_current_env()
-    request = parser.replace_placeholders(request, env, verbose)
+    request = parser.replace_placeholders(request, env)
 
     if verbose then
         print("Request after placeholder replacement:", vim.inspect(request)) -- Debug output
