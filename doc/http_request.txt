@@ -1,0 +1,101 @@
+A Neovim plugin for running HTTP requests from .http files
+
+==============================================================================
+USAGE                                                    *http-request-usage*
+
+This plugin allows you to run HTTP requests directly from .http files, with
+support for environment variables.
+
+1. Create a .http file with your HTTP requests.
+2. Create a .env.json file with your environments.
+3. Use the provided commands to select an environment and run requests.
+
+------------------------------------------------------------------------------
+COMMANDS                                              *http-request-commands*
+
+:HttpEnvFile                                                   *:HttpEnvFile*
+    Select an environment file (.env.json) to use.
+
+:HttpEnv {env}                                                     *:HttpEnv*
+    Set the current environment to use (e.g., :HttpEnv production).
+
+:HttpRun                                                           *:HttpRun*
+    Run the HTTP request under the cursor.
+
+:HttpStop                                                         *:HttpStop*
+    Stop the currently running HTTP request.
+
+------------------------------------------------------------------------------
+KEYBINDINGS                                        *http-request-keybindings*
+
+The plugin comes with the following default keybindings:
+
+<leader>he                                       *http-request-select-env-file*
+    Select environment file
+
+<leader>hs                                            *http-request-set-env*
+    Set current environment
+
+<leader>hr                                            *http-request-run*
+    Run HTTP request under cursor
+
+<leader>hx                                            *http-request-stop*
+    Stop running HTTP request
+
+To customize these keybindings, you can pass a 'keybindings' table to the
+setup function in your Neovim configuration:
+>
+    require("http_request").setup({
+      keybindings = {
+        select_env_file = "<leader>he",
+        set_env = "<leader>hs",
+        run_request = "<leader>hr",
+        stop_request = "<leader>hx",
+      },
+    })
+<
+Replace the key combinations with your preferred bindings.
+
+
+------------------------------------------------------------------------------
+EXAMPLE .http FILE                                 *http-request-example-http*
+>
+    GET {{host}}/api/users
+
+    ###
+
+    POST {{host}}/api/users
+    Content-Type: application/json
+
+    {
+        "name": "John Doe",
+        "email": "john@example.com"
+    }
+<
+
+------------------------------------------------------------------------------
+EXAMPLE .env.json FILE                             *http-request-example-env*
+>
+    {
+        "*default": {
+            "host": "http://localhost:3000"
+        },
+        "production": {
+            "host": "https://api.example.com"
+        }
+    }
+<
+
+------------------------------------------------------------------------------
+ENVIRONMENT FILES                            *http-request-environment-files*
+
+Environment files (.env.json) allow you to define different sets of variables
+for your HTTP requests. The plugin will look for these files in your project
+root directory.
+
+The "*default" environment is used as a base, and other environments will
+override its values.
+
+==============================================================================
+vim:ft=help:et:ts=4:sw=4:sts=4:norl:
+
