@@ -33,5 +33,9 @@ M.get_current_env = function()
     return current_env or {}
 end
 
+M.get_current_env_file = function ()
+    return current_env_file
+end
+
 return M
 
