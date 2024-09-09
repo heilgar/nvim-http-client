@@ -1,5 +1,13 @@
 local M = {}
 
+local function format_headers(headers)
+    local formatted = {}
+    for k, v in pairs(headers or {}) do
+        table.insert(formatted, string.format("%s: %s", k, v))
+    end
+    return table.concat(formatted, "\n")
+end
+
 
 function M.display_dry_run(http_client)
     local request = http_client.parser.get_request_under_cursor()
@@ -16,7 +24,7 @@ function M.display_dry_run(http_client)
     local current_request = vim.inspect(http_client.http_client.get_current_request() or {})
 
 
-local ui = require('http_client.ui')
+    local ui = require('http_client.ui')
 
     local content = string.format([[
 Dry Run Information:
@@ -42,7 +50,7 @@ Current request:
 ]],
         request.method,
         request.url,
-        ui.format_headers(request.headers),
+        format_headers(request.headers),
         request.body or "No body",
         env_file,
         env_info,
