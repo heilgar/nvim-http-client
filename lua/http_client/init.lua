@@ -1,5 +1,16 @@
 local M = {}
 
+-- Load all necessary modules
+M.commands = require('http_client.commands')
+M.environment = require('http_client.environment')
+M.file_utils = require('http_client.file_utils')
+M.http_client = require('http_client.http_client')
+M.parser = require('http_client.parser')
+M.ui = require('http_client.ui')
+M.dry_run = require('http_client.dry_run')
+
+
+
 M.config = {
     default_env_file = '.env.json',
     request_timeout = 30000, -- 30 seconds
@@ -40,15 +51,6 @@ end
 
 function M.setup(opts)
     M.config = vim.tbl_deep_extend("force", M.config, opts or {})
-
-    -- Load all necessary modules
-    M.commands = require('http_client.commands')
-    M.environment = require('http_client.environment')
-    M.file_utils = require('http_client.file_utils')
-    M.http_client = require('http_client.http_client')
-    M.parser = require('http_client.parser')
-    M.ui = require('http_client.ui')
-    M.dry_run = require('http_client.dry_run')
 
     -- Set up commands
     vim.api.nvim_create_user_command('HttpEnvFile', function()
