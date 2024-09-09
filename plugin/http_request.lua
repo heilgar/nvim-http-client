@@ -16,7 +16,11 @@ vim.api.nvim_create_user_command('HttpStop', function()
     http_request.commands.stop_request()
 end, {})
 
-vim.api.nvim_create_user_command('HttpDebug', function ()
+vim.api.nvim_create_user_command('HttpDebug', function()
     http_request.commands.debug()
+end, {})
+
+vim.api.nvim_create_user_command('HttpDryRun', function()
+    http_request.commands.dry_run()
 end, {})
 

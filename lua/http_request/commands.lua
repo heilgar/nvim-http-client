@@ -4,7 +4,8 @@ local file_utils = require('http_request.file_utils')
 local http_client = require('http_request.http_client')
 local parser = require('http_request.parser')
 local ui = require('http_request.ui')
-local debug = require('http_request.debug')
+local dbg = require('http_request.debug')
+local dry_run = require('http_request.dry_run')
 
 M.select_env_file = function()
     local files = file_utils.find_files('*.env.json')
@@ -48,7 +49,11 @@ M.stop_request = function()
 end
 
 M.debug = function()
-    debug.display_debug_info(M)
+    dbg.display_debug_info(M)
+end
+
+M.dry_run = function()
+    dry_run.display_dry_run(M)
 end
 
 return M

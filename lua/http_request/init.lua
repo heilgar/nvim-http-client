@@ -49,7 +49,7 @@ function M.setup(opts)
     M.parser = require('http_request.parser')
     M.ui = require('http_request.ui')
     M.debug = require('http_request.debug')
-
+    M.dry_run = require('http_request.dry_run')
     -- Set up commands
     vim.api.nvim_create_user_command('HttpEnvFile', function()
         M.commands.select_env_file()
@@ -70,6 +70,12 @@ function M.setup(opts)
     vim.api.nvim_create_user_command('HttpDebug', function()
         M.debug.display_debug_info(M)
     end, {})
+
+    vim.api.nvim_create_user_command('HttpDryRun', function()
+        M.dry_run.display_dry_run(M)
+    end, {})
+
+
 
     setup_docs()
     set_keybindings()
