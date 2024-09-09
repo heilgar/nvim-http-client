@@ -69,17 +69,11 @@ function M.setup(opts)
         M.commands.run_request()
     end, { nargs = '?' })
 
-    vim.api.nvim_create_user_command('HttpVerbose', function(cmd_opts)
-        if cmd_opts.args == "on" then
-            M.http_client.set_verbose_mode(true)
-            print("HTTP Client verbose mode enabled")
-        elseif opts.args == "off" then
-            M.http_client.set_verbose_mode(false)
-            print("HTTP Client verbose mode disabled")
-        else
-            print("Usage: HttpVerbose on|off")
-        end
-    end, { nargs = 1, complete = function(_, _, _) return { "on", "off" } end })
+vim.api.nvim_create_user_command('HttpVerbose', function()
+    local current_state = M.http_client.get_verbose_mode()
+    M.http_client.set_verbose_mode(not current_state)
+    print(string.format("HTTP Client verbose mode %s", not current_state and "enabled" or "disabled"))
+end, {})
 
     vim.api.nvim_create_user_command('HttpStop', function()
         M.commands.stop_request()

@@ -102,9 +102,7 @@ M.run_request = function(opts)
         print("Request after placeholder replacement:", vim.inspect(request)) -- Debug output
     end
 
-    http_client.send_request(request, function(response)
-        ui.display_response(response)
-    end)
+    http_client.send_request(request)
 end
 
 M.stop_request = function()
@@ -128,9 +126,10 @@ M.stop_request = function()
     http_client.clear_current_request()
 end
 
-M.set_verbose_mode = function(enabled)
-    http_client.set_verbose_mode(enabled)
-    print(string.format("Verbose mode %s", enabled and "enabled" or "disabled"))
+M.toggle_verbose_mode = function()
+    local current_state = http_client.get_verbose_mode()
+    http_client.set_verbose_mode(not current_state)
+    print(string.format("HTTP Client verbose mode %s", not current_state and "enabled" or "disabled"))
 end
 
 M.dry_run = function()
