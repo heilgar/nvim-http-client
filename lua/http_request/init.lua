@@ -48,6 +48,7 @@ function M.setup(opts)
     M.http_client = require('http_request.http_client')
     M.parser = require('http_request.parser')
     M.ui = require('http_request.ui')
+    M.debug = require('http_request.debug')
 
     -- Set up commands
     vim.api.nvim_create_user_command('HttpEnvFile', function()
@@ -65,6 +66,12 @@ function M.setup(opts)
     vim.api.nvim_create_user_command('HttpStop', function()
         M.commands.stop_request()
     end, {})
+
+    vim.api.nvim_create_user_command('HttpDebug', function()
+        M.debug.display_debug_info(M)
+    end, {})
+
+
 
     setup_docs()
     set_keybindings()

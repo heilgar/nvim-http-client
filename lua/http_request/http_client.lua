@@ -33,5 +33,9 @@ M.stop_request = function()
     end
 end
 
+M.get_current_request = function ()
+    return current_request
+end
+
 return M
 
