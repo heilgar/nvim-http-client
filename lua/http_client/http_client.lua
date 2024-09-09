@@ -6,8 +6,17 @@ local current_request = nil
 
 local function detect_content_type(headers)
     local content_type
+
+    -- If headers are in key-value pair format
     for k, v in pairs(headers or {}) do
-        if k:lower() == "content-type" then
+        -- Handle numeric keys if headers are returned as an array of strings
+        if type(k) == "number" and type(v) == "string" then
+            local header_key, header_value = v:match("^(.-):%s*(.*)")
+            if header_key and header_key:lower() == "content-type" then
+                content_type = header_value
+                break
+            end
+        elseif type(k) == "string" and k:lower() == "content-type" then
             content_type = v
             break
         end
@@ -28,22 +37,20 @@ end
 local function format_json(body)
     local ok, parsed = pcall(vim.fn.json_decode, body)
     if ok then
-        return vim.fn.json_encode(parsed)
+        return vim.fn.json_encode(parsed):gsub(',"', ',\n  "'):gsub('{', '{\n  '):gsub('}', '\n}')
     end
     return body
 end
 
 local function format_xml(body)
-    local formatted = body:gsub("><", ">\n<")
     local indent = 0
-    formatted = formatted:gsub("([^>]*>)", function(tag)
-        local result
-        if tag:match("^</") then
-            indent = indent - 1
-        end
-        result = string.rep("  ", indent) .. tag
-        if not tag:match("/>$") and not tag:match("^</") then
+    local formatted = body:gsub("(<[^/!][^>]*>)", function(tag)
+        local result = string.rep("  ", indent) .. tag
+        if not tag:match("/>$") and not tag:match("</") then
             indent = indent + 1
+        elseif tag:match("</") then
+            indent = indent - 1
+            result = string.rep("  ", indent) .. tag
         end
         return result
     end)
@@ -52,8 +59,12 @@ end
 
 local function format_headers(headers)
     local formatted = {}
-    for k, v in pairs(headers or {}) do
-        table.insert(formatted, string.format("%s: %s", k, v))
+    for _, header in pairs(headers or {}) do
+        -- Match header in the form of "Key: Value" and insert it directly
+        local header_key, header_value = header:match("^(.-):%s*(.*)")
+        if header_key and header_value then
+            table.insert(formatted, string.format("%s: %s", header_key, header_value))
+        end
     end
     return table.concat(formatted, "\n")
 end
