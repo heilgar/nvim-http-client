@@ -11,6 +11,8 @@ A Neovim plugin for running HTTP requests directly from .http files, with suppor
 - Pretty-printed response display in a separate buffer
 - Automatic formatting for JSON and XML responses
 - Syntax highlighting based on content type
+- Verbose mode for debugging
+- Dry run capability for request inspection
 
 ## Installation
 
@@ -75,7 +77,8 @@ Content-Type: application/json
 - `:HttpEnv {env}`: Set the current environment to use (e.g., `:HttpEnv production`).
 - `:HttpRun`: Run the HTTP request under the cursor.
 - `:HttpStop`: Stop the currently running HTTP request.
-
+- `:HttpVerbose`: Toggle verbose mode for debugging.
+- `:HttpDryRun`: Perform a dry run of the request under the cursor.
 
 ## Keybindings
 
@@ -85,6 +88,8 @@ The plugin comes with the following default keybindings:
 - `<leader>hs`: Set current environment
 - `<leader>hr`: Run HTTP request under cursor
 - `<leader>hx`: Stop running HTTP request
+- `<leader>hv`: Toggle verbose mode
+- `<leader>hd`: Perform dry run
 
 To customize these keybindings, you can add the following to your Neovim configuration:
 
@@ -103,13 +108,15 @@ To customize these keybindings, you can add the following to your Neovim configu
         { "<leader>hs", "<cmd>HttpEnv<cr>", desc = "Set HTTP environment" },
         { "<leader>hr", "<cmd>HttpRun<cr>", desc = "Run HTTP request" },
         { "<leader>hx", "<cmd>HttpStop<cr>", desc = "Stop HTTP request" },
+        { "<leader>hv", "<cmd>HttpVerbose<cr>", desc = "Toggle verbose mode" },
+        { "<leader>hd", "<cmd>HttpDryRun<cr>", desc = "Perform dry run" },
     },
     cmd = {
         "HttpEnvFile",
         "HttpEnv",
         "HttpRun",
         "HttpStop",
-        "HttpDebug",
+        "HttpVerbose",
         "HttpDryRun"
     },
 }
@@ -119,7 +126,7 @@ You can change the key mappings by modifying the `keybindings` table in the setu
 
 ## Documentation
 
-After installing the plugin, you can access the full documentation by running `:h http-client-usage` in Neovim.
+After installing the plugin, you can access the full documentation by running `:h http_client` in Neovim.
 
 ## Environment Files
 
