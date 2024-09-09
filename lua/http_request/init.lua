@@ -12,13 +12,30 @@ M.config = {
 }
 
 
+local function setup_docs()
+    if vim.fn.has("nvim-0.7") == 1 then
+        vim.api.nvim_create_autocmd("BufWinEnter", {
+            group = vim.api.nvim_create_augroup("http_request_docs", {}),
+            pattern = "*/http_request/doc/*.txt",
+            callback = function()
+                vim.cmd("silent! helptags " .. vim.fn.expand("%:p:h"))
+            end,
+        })
+    end
+end
+
 local function set_keybindings()
     local opts = { noremap = true, silent = true }
 
-    vim.keymap.set('n', M.config.keybindings.select_env_file, ':HttpEnvFile<CR>', opts)
-    vim.keymap.set('n', M.config.keybindings.set_env, ':HttpEnv ', { noremap = true })
-    vim.keymap.set('n', M.config.keybindings.run_request, ':HttpRun<CR>', opts)
-    vim.keymap.set('n', M.config.keybindings.stop_request, ':HttpStop<CR>', opts)
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "http",
+        callback = function()
+            vim.keymap.set('n', M.config.keybindings.select_env_file, ':HttpEnvFile<CR>', opts)
+            vim.keymap.set('n', M.config.keybindings.set_env, ':HttpEnv ', { noremap = true, buffer = true })
+            vim.keymap.set('n', M.config.keybindings.run_request, ':HttpRun<CR>', opts)
+            vim.keymap.set('n', M.config.keybindings.stop_request, ':HttpStop<CR>', opts)
+        end
+    })
 end
 
 function M.setup(opts)
@@ -49,7 +66,7 @@ function M.setup(opts)
         M.commands.stop_request()
     end, {})
 
-    -- Set up keybindings
+    setup_docs()
     set_keybindings()
 end
 

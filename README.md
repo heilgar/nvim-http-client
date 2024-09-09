@@ -118,6 +118,9 @@ To customize these keybindings, you can add the following to your Neovim configu
 
 You can change the key mappings by modifying the `keybindings` table in the setup function and updating the `keys` table accordingly.
 
+## Documentation
+
+After installing the plugin, you can access the full documentation by running `:help http_request` in Neovim.
 
 ## Environment Files
 
