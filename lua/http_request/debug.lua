@@ -43,8 +43,8 @@ Request under cursor:
     vim.api.nvim_buf_set_option(buf, 'modifiable', false)
     vim.api.nvim_buf_set_option(buf, 'readonly', true)
 
-    -- Optional: Set some mappings for the debug window
-    local opts = { noremap = true, silent = true, buffer = buf }
+    -- Set buffer-local keymaps
+    local opts = { noremap = true, silent = true }
     vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', opts)
     vim.api.nvim_buf_set_keymap(buf, 'n', '<Esc>', ':close<CR>', opts)
 end
