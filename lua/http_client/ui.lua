@@ -71,14 +71,13 @@ local function display_in_buffer(content, title)
     end)
 end
 
-local function format_headers(headers)
+function M.format_headers(headers)
     local formatted = {}
     for k, v in pairs(headers or {}) do
         table.insert(formatted, string.format("%s: %s", k, v))
     end
     return table.concat(formatted, "\n")
 end
-
 
 function M.prepare_response(response)
     local content_type = detect_content_type(response.headers or {})
@@ -102,7 +101,7 @@ Body (%s):
 %s
 ]],
         response.status or "N/A",
-        format_headers(response.headers),
+        M.format_headers(response.headers),
         content_type,
         formatted_body
     )
