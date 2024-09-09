@@ -6,25 +6,79 @@ local parser = require('http_client.parser')
 local ui = require('http_client.ui')
 local dry_run = require('http_client.dry_run')
 
+local config = {}
+
+M.setup = function(cfg)
+    config = cfg
+    return M
+end
+
 M.select_env_file = function()
     local files = file_utils.find_files('*.env.json')
+    local default_file = config.default_env_file or '.env.json'
+    local default_index = nil
+
+    -- Find the index of the default file
+    for i, file in ipairs(files) do
+        if file:match(default_file .. "$") then
+            default_index = i
+            break
+        end
+    end
+
     vim.ui.select(files, {
         prompt = 'Select environment file:',
+        default = default_index
     }, function(choice)
         if choice then
             environment.set_env_file(choice)
             print('Environment file set to: ' .. choice)
+            -- Automatically select environment after file selection
+            M.select_env()
         end
     end)
 end
 
-M.set_env = function(env_name)
-    local success = environment.set_env(env_name)
-    if success then
-        print('Environment set to: ' .. env_name)
-    else
-        print('Failed to set environment: ' .. env_name)
+M.select_env = function()
+    if not environment.get_current_env_file() then
+        print('No environment file selected. Please select an environment file first.')
+        return
     end
+
+    local env_data = file_utils.read_json_file(environment.get_current_env_file())
+    if not env_data then
+        print('Failed to read environment file')
+        return
+    end
+
+    -- Set *default environment first
+    local success = environment.set_env('*default')
+    if success then
+        print('Environment set to: *default')
+    else
+        print('Failed to set default environment')
+        return
+    end
+
+    local env_names = {'*default'}
+    for name, _ in pairs(env_data) do
+        if name ~= '*default' then
+            table.insert(env_names, name)
+        end
+    end
+
+    vim.ui.select(env_names, {
+        prompt = 'Select environment (current: *default):',
+    }, function(choice)
+        if choice and choice ~= '*default' then
+            local success = environment.set_env(choice)
+            if success then
+                print('Environment set to: ' .. choice)
+            else
+                print('Failed to set environment: ' .. choice)
+            end
+        end
+    end)
 end
 
 M.run_request = function(opts)
@@ -52,6 +106,7 @@ M.run_request = function(opts)
         ui.display_response(response)
     end)
 end
+
 M.stop_request = function()
     local current_request = http_client.get_current_request()
     if not current_request then

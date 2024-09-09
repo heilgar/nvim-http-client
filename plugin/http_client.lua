@@ -6,8 +6,8 @@ vim.api.nvim_create_user_command('HttpEnvFile', function()
 end, {})
 
 
-vim.api.nvim_create_user_command('HttpEnv', function(opts)
-    http_client.commands.set_env(opts.args)
+vim.api.nvim_create_user_command('HttpEnv', function()
+    http_client.commands.select_env()
 end, { nargs = 1 })
 
 
