@@ -32,7 +32,7 @@ M.select_env_file = function()
     }, function(choice)
         if choice then
             environment.set_env_file(choice)
-            print('Environment file set to: ' .. choice)
+            print('\n\nEnvironment file set to: ' .. choice)
             -- Automatically select environment after file selection
             M.select_env()
         end
@@ -41,26 +41,26 @@ end
 
 M.select_env = function()
     if not environment.get_current_env_file() then
-        print('No environment file selected. Please select an environment file first.')
+        print('\nNo environment file selected. Please select an environment file first.')
         return
     end
 
     local env_data = file_utils.read_json_file(environment.get_current_env_file())
     if not env_data then
-        print('Failed to read environment file')
+        print('\nFailed to read environment file')
         return
     end
 
     -- Set *default environment first
     local success = environment.set_env('*default')
     if success then
-        print('Environment set to: *default')
+        print('\nEnvironment set to: *default')
     else
-        print('Failed to set default environment')
+        print('\nFailed to set default environment')
         return
     end
 
-    local env_names = {'*default'}
+    local env_names = { '*default' }
     for name, _ in pairs(env_data) do
         if name ~= '*default' then
             table.insert(env_names, name)
@@ -73,9 +73,9 @@ M.select_env = function()
         if choice and choice ~= '*default' then
             local success = environment.set_env(choice)
             if success then
-                print('Environment set to: ' .. choice)
+                print('\nEnvironment set to: ' .. choice)
             else
-                print('Failed to set environment: ' .. choice)
+                print('\nFailed to set environment: ' .. choice)
             end
         end
     end)
@@ -87,7 +87,7 @@ M.run_request = function(opts)
 
     local request = parser.get_request_under_cursor(verbose)
     if not request then
-        print('No valid HTTP request found under cursor')
+        print('\nNo valid HTTP request found under cursor')
         return
     end
 
@@ -110,7 +110,7 @@ end
 M.stop_request = function()
     local current_request = http_client.get_current_request()
     if not current_request then
-        print('No active request to stop')
+        print('\nNo active request to stop')
         return
     end
 
@@ -119,9 +119,9 @@ M.stop_request = function()
     end)
 
     if success then
-        print('HTTP request stopped successfully')
+        print('\nHTTP request stopped successfully')
     else
-        print('Error stopping HTTP request: ' .. tostring(error))
+        print('\nError stopping HTTP request: ' .. tostring(error))
     end
 
     -- Cleanup
