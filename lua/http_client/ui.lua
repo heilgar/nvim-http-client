@@ -42,29 +42,29 @@ end
 
 function M.prepare_response(response)
     local lines = {}
-    table.insert(lines, "Status: " .. response.status)
+    table.insert(lines, "Status: " .. (response.status or "N/A"))
     table.insert(lines, "")
     table.insert(lines, "Headers:")
-    for k, v in pairs(response.headers) do
+    for k, v in pairs(response.headers or {}) do
         table.insert(lines, k .. ": " .. v)
     end
     table.insert(lines, "")
     table.insert(lines, "Body:")
 
-    local content_type = detect_content_type(response.headers)
-    local formatted_body = response.body
+    local content_type = detect_content_type(response.headers or {})
+    local formatted_body = response.body or ""
 
     if content_type == "json" then
-        formatted_body = format_json(response.body)
+        formatted_body = format_json(formatted_body)
     elseif content_type == "xml" then
-        formatted_body = format_xml(response.body)
+        formatted_body = format_xml(formatted_body)
     end
 
     for line in formatted_body:gmatch("[^\r\n]+") do
         table.insert(lines, line)
     end
 
-    return { lines = lines, filetype = content_type }
+    return { lines = lines, filetype = content_type or "text" }
 end
 
 function M.display_response(prepared_response)
@@ -75,8 +75,16 @@ function M.display_response(prepared_response)
         vim.api.nvim_buf_set_option(buf, 'swapfile', false)
         vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
 
+        -- Ensure prepared_response.lines is a table of strings
+        local lines = prepared_response.lines or {}
+        if type(lines) == 'string' then
+            lines = vim.split(lines, '\n')
+        elseif type(lines) ~= 'table' then
+            lines = {tostring(lines)}
+        end
+
         -- Set buffer lines
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, prepared_response.lines)
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
         -- Open in a new tab
         vim.cmd('tabnew')
@@ -84,7 +92,7 @@ function M.display_response(prepared_response)
         vim.api.nvim_win_set_buf(win, buf)
 
         -- Set filetype for syntax highlighting
-        vim.api.nvim_buf_set_option(buf, 'filetype', prepared_response.filetype)
+        vim.api.nvim_buf_set_option(buf, 'filetype', prepared_response.filetype or 'text')
 
         -- Apply syntax highlighting
         vim.cmd('syntax on')
