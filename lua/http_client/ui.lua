@@ -40,59 +40,78 @@ local function format_xml(body)
     return formatted
 end
 
-function M.prepare_response(response)
-    local lines = {}
-    table.insert(lines, "Status: " .. (response.status or "N/A"))
-    table.insert(lines, "")
-    table.insert(lines, "Headers:")
-    for k, v in pairs(response.headers or {}) do
-        table.insert(lines, string.format("%s: %s", k, v))
-    end
-    table.insert(lines, "")
-    table.insert(lines, "Body:")
-    local content_type = detect_content_type(response.headers or {})
-    local formatted_body = response.body or ""
-    if content_type == "json" then
-        formatted_body = format_json(formatted_body)
-    elseif content_type == "xml" then
-        formatted_body = format_xml(formatted_body)
-    end
-    for line in formatted_body:gmatch("[^\r\n]+") do
-        table.insert(lines, line)
-    end
-    return { lines = lines, filetype = content_type }
-end
 
-function M.display_response(prepared_response)
+local function display_in_buffer(content, title)
     vim.schedule(function()
-        -- Move buffer creation inside vim.schedule
+        -- Create a new buffer
         local buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_set_option(buf, 'buftype', 'nofile')
         vim.api.nvim_buf_set_option(buf, 'swapfile', false)
         vim.api.nvim_buf_set_option(buf, 'bufhidden', 'wipe')
 
-        -- Ensure prepared_response.lines is a table of strings
-        local lines = prepared_response.lines or {}
-        if type(lines) == 'string' then
-            lines = vim.split(lines, '\n')
-        elseif type(lines) ~= 'table' then
-            lines = { tostring(lines) }
-        end
+        -- Set buffer name
+        vim.api.nvim_buf_set_name(buf, title)
 
-        -- Set buffer lines
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+        -- Set buffer content
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(content, '\n'))
 
-        -- Open in a new tab
-        vim.cmd('tabnew')
+        -- Open in a vertical split
+        vim.cmd('vsplit')
         local win = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_buf(win, buf)
 
-        -- Set filetype for syntax highlighting
-        vim.api.nvim_buf_set_option(buf, 'filetype', prepared_response.filetype or 'text')
+        -- Set buffer to readonly
+        vim.api.nvim_buf_set_option(buf, 'modifiable', false)
+        vim.api.nvim_buf_set_option(buf, 'readonly', true)
 
-        -- Apply syntax highlighting
-        vim.cmd('syntax on')
+        -- Set buffer-local keymaps
+        local opts = { noremap = true, silent = true }
+        vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', opts)
+        vim.api.nvim_buf_set_keymap(buf, 'n', '<Esc>', ':close<CR>', opts)
     end)
+end
+
+local function format_headers(headers)
+    local formatted = {}
+    for k, v in pairs(headers or {}) do
+        table.insert(formatted, string.format("%s: %s", k, v))
+    end
+    return table.concat(formatted, "\n")
+end
+
+
+function M.prepare_response(response)
+    local content_type = detect_content_type(response.headers or {})
+    local formatted_body = response.body or "No body"
+
+    if content_type == "json" then
+        formatted_body = format_json(formatted_body)
+    elseif content_type == "xml" then
+        formatted_body = format_xml(formatted_body)
+    end
+
+    local content = string.format([[
+Response Information:
+---------------------
+Status: %s
+
+Headers:
+%s
+
+Body (%s):
+%s
+]],
+        response.status or "N/A",
+        format_headers(response.headers),
+        content_type,
+        formatted_body
+    )
+
+    return content
+end
+
+function M.display_response(prepared_response)
+    display_in_buffer(prepared_response, "HTTP Response")
 end
 
 return M
