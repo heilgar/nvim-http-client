@@ -64,7 +64,7 @@ function M.prepare_response(response)
         table.insert(lines, line)
     end
 
-    return { lines = lines, filetype = content_type or "text" }
+    return lines
 end
 
 function M.display_response(prepared_response)
@@ -80,7 +80,7 @@ function M.display_response(prepared_response)
         if type(lines) == 'string' then
             lines = vim.split(lines, '\n')
         elseif type(lines) ~= 'table' then
-            lines = {tostring(lines)}
+            lines = { tostring(lines) }
         end
 
         -- Set buffer lines
