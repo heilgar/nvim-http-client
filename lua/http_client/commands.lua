@@ -4,7 +4,6 @@ local file_utils = require('http_request.file_utils')
 local http_client = require('http_request.http_client')
 local parser = require('http_request.parser')
 local ui = require('http_request.ui')
-local dbg = require('http_request.debug')
 local dry_run = require('http_request.dry_run')
 
 M.select_env_file = function()
@@ -28,7 +27,10 @@ M.set_env = function(env_name)
     end
 end
 
-M.run_request = function()
+M.run_request = function(opts)
+    local verbose = opts and opts.verbose or false
+    http_client.set_verbose_mode(verbose)
+
     local request = parser.get_request_under_cursor()
     if not request then
         print('No valid HTTP request found under cursor')
@@ -43,13 +45,14 @@ M.run_request = function()
     end)
 end
 
+M.set_verbose_mode = function(enabled)
+    http_client.set_verbose_mode(enabled)
+    print(string.format("Verbose mode %s", enabled and "enabled" or "disabled"))
+end
+
 M.stop_request = function()
     http_client.stop_request()
     print('HTTP request stopped')
-end
-
-M.debug = function()
-    dbg.display_debug_info(M)
 end
 
 M.dry_run = function()
