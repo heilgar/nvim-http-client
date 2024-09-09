@@ -44,14 +44,31 @@ M.send_request = function(request, callback)
         headers = request.headers,
         callback = function(response)
             debug_print("Response received")
+            debug_print(string.format("Status: %s", response.status))
+            debug_print("Response headers:")
+            for k, v in pairs(response.headers) do
+                debug_print(string.format("  %s: %s", k, v))
+            end
+            debug_print("Response body:")
+            debug_print(response.body)
+
             current_request = nil
-            local prepared_response = ui.prepare_response(response)
-            ui.display_response(prepared_response)
+
+            debug_print("Calling ui.display_response")
+            local pr = ui.prepare_response(response)
+            ui.display_response(pr)
+
             if callback then
+                debug_print("Calling user-provided callback")
                 callback(response)
             end
         end
     })
+
+    if not current_request then
+        debug_print("Failed to initiate request")
+        return
+    end
 
     debug_print("Request sent, waiting for response...")
 end
