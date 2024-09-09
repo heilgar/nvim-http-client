@@ -8,6 +8,8 @@ M.config = {
         set_env = "<leader>hs",
         run_request = "<leader>hr",
         stop_request = "<leader>hx",
+        dry_run = "<leader>hd",
+        toggle_verbose = "<leader>hv"
     },
 }
 
@@ -34,6 +36,8 @@ local function set_keybindings()
             vim.keymap.set('n', M.config.keybindings.set_env, ':HttpEnv ', { noremap = true, buffer = true })
             vim.keymap.set('n', M.config.keybindings.run_request, ':HttpRun<CR>', opts)
             vim.keymap.set('n', M.config.keybindings.stop_request, ':HttpStop<CR>', opts)
+            vim.keymap.set('n', M.config.keybindings.dry_run, ':HttpDryRun<CR>', opts)
+            vim.keymap.set('n', M.config.keybindings.toggle_verbose, ':HttpVerbose<CR>', opts)
         end
     })
 end
@@ -69,11 +73,11 @@ function M.setup(opts)
         M.commands.run_request()
     end, { nargs = '?' })
 
-vim.api.nvim_create_user_command('HttpVerbose', function()
-    local current_state = M.http_client.get_verbose_mode()
-    M.http_client.set_verbose_mode(not current_state)
-    print(string.format("HTTP Client verbose mode %s", not current_state and "enabled" or "disabled"))
-end, {})
+    vim.api.nvim_create_user_command('HttpVerbose', function()
+        local current_state = M.http_client.get_verbose_mode()
+        M.http_client.set_verbose_mode(not current_state)
+        print(string.format("HTTP Client verbose mode %s", not current_state and "enabled" or "disabled"))
+    end, {})
 
     vim.api.nvim_create_user_command('HttpStop', function()
         M.commands.stop_request()
