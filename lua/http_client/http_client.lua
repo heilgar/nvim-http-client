@@ -35,16 +35,37 @@ local function detect_content_type(headers)
 end
 
 local function format_json(body)
-    local ok, parsed = pcall(vim.fn.json_decode, body)
-    if ok then
-        return vim.fn.json_encode(parsed):gsub(',%s*', ',\n  ')
-            :gsub('{%s*', '{\n  ')
-            :gsub('}%s*', '\n}')
-            :gsub('%[%s*', '[\n  ')
-            :gsub(']%s*', '\n]')
-            :gsub(':%s*', ': ')
+    local ok, parsed = pcall(vim.json.decode, body)
+    if not ok then
+        return body -- Return original body if it's not valid JSON
     end
-    return body
+
+    local function encode_with_indent(value, indent)
+        indent = indent or ""
+        local newline = "\n" .. indent
+
+        if type(value) == "table" then
+            if vim.tbl_islist(value) then
+                local items = {}
+                for _, v in ipairs(value) do
+                    table.insert(items, encode_with_indent(v, indent .. "  "))
+                end
+                return "[" .. newline .. "  " .. table.concat(items, "," .. newline .. "  ") .. newline .. "]"
+            else
+                local items = {}
+                for k, v in pairs(value) do
+                    table.insert(items, string.format('%q: %s', k, encode_with_indent(v, indent .. "  ")))
+                end
+                return "{" .. newline .. "  " .. table.concat(items, "," .. newline .. "  ") .. newline .. "}"
+            end
+        elseif type(value) == "string" then
+            return string.format('%q', value)
+        else
+            return tostring(value)
+        end
+    end
+
+    return encode_with_indent(parsed)
 end
 
 local function format_xml(body)
