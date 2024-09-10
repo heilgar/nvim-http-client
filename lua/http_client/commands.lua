@@ -3,7 +3,6 @@ local environment = require('http_client.environment')
 local file_utils = require('http_client.file_utils')
 local http_client = require('http_client.http_client')
 local parser = require('http_client.parser')
-local ui = require('http_client.ui')
 local dry_run = require('http_client.dry_run')
 local vvv = require('http_client.verbose')
 
