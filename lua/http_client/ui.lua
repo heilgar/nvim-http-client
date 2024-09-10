@@ -28,6 +28,8 @@ function M.display_in_buffer(content, title)
         local opts = { noremap = true, silent = true }
         vim.api.nvim_buf_set_keymap(buf, 'n', 'q', ':close<CR>', opts)
         vim.api.nvim_buf_set_keymap(buf, 'n', '<Esc>', ':close<CR>', opts)
+
+        vim.api.nvim_buf_set_option(buf, 'filetype', 'http_response')
     end)
 end
 

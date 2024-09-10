@@ -38,11 +38,11 @@ local function format_json(body)
     local ok, parsed = pcall(vim.fn.json_decode, body)
     if ok then
         return vim.fn.json_encode(parsed):gsub(',%s*', ',\n  ')
-                                         :gsub('{%s*', '{\n  ')
-                                         :gsub('}%s*', '\n}')
-                                         :gsub('%[%s*', '[\n  ')
-                                         :gsub(']%s*', '\n]')
-                                         :gsub(':%s*', ': ')
+            :gsub('{%s*', '{\n  ')
+            :gsub('}%s*', '\n}')
+            :gsub('%[%s*', '[\n  ')
+            :gsub(']%s*', '\n]')
+            :gsub(':%s*', ': ')
     end
     return body
 end
@@ -74,7 +74,7 @@ local function format_headers(headers)
     return table.concat(formatted, "\n")
 end
 
-local function prepare_response(response)
+local function prepare_response(request, response)
     local content_type = detect_content_type(response.headers or {})
     local formatted_body = response.body or "No body"
 
@@ -87,14 +87,17 @@ local function prepare_response(response)
     local content = string.format([[
 Response Information:
 ---------------------
-Status: %s
+%s %s
+# Status: %s
 
-Headers:
+# Headers:
 %s
 
-Body (%s):
+# Body (%s):
 %s
 ]],
+        request.method,
+        request.url,
         response.status or "N/A",
         format_headers(response.headers),
         content_type,
@@ -148,7 +151,7 @@ M.send_request = function(request)
             current_request = nil
 
             vvv.debug_print("Calling ui.display_response")
-            local pr = prepare_response(response)
+            local pr = prepare_response(request, response)
             display_response(pr)
         end
     })
