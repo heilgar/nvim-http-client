@@ -59,29 +59,41 @@ function M.setup(opts)
     -- Set up commands
     vim.api.nvim_create_user_command('HttpEnvFile', function()
         M.commands.select_env_file()
-    end, {})
+    end, {
+        desc = 'Select an environment file for HTTP requests.'
+    })
 
     vim.api.nvim_create_user_command('HttpEnv', function()
         M.commands.select_env()
-    end, {})
+    end, {
+        desc = 'Select an environment for HTTP request (requires one argument).',
+    })
 
     vim.api.nvim_create_user_command('HttpRun', function()
         M.commands.run_request()
-    end, {})
+    end, {
+        desc = 'Run the HTTP request under cursor. Use ! to enable verbose mode.',
+    })
 
     vim.api.nvim_create_user_command('HttpVerbose', function()
         local current_state = M.v.get_verbose_mode()
         M.v.set_verbose_mode(not current_state)
         print(string.format("HTTP Client verbose mode %s", not current_state and "enabled" or "disabled"))
-    end, {})
+    end, {
+        desc = 'Toggle verbose mode for HTTP request.'
+    })
 
     vim.api.nvim_create_user_command('HttpStop', function()
         M.commands.stop_request()
-    end, {})
+    end, {
+        desc = 'Stop the currently running HTTP request.'
+    })
 
     vim.api.nvim_create_user_command('HttpDryRun', function()
         M.dry_run.display_dry_run(M)
-    end, {})
+    end, {
+        desc = 'Perform a dry run of the HTTP request without sending it.'
+    })
 
 
 
