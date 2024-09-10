@@ -29,13 +29,13 @@ function M.display_dry_run(http_client)
     local content = string.format([[
 Dry Run Information:
 --------------------
-Method: %s
-URL: %s
+%s %s
+# Status: %s
 
-Headers:
+# Headers:
 %s
 
-Body:
+# Body:
 %s
 
 Environment Information:
@@ -50,6 +50,7 @@ Current request:
 ]],
         request.method,
         request.url,
+        request.status or "N/A",
         format_headers(request.headers),
         request.body or "No body",
         env_file,
