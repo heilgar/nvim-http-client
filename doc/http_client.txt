@@ -1,3 +1,6 @@
+For doc/http_client.txt:
+
+```text
 *http_client.txt* A Neovim plugin for running HTTP requests from .http files
 
 ==============================================================================
@@ -16,8 +19,8 @@ COMMANDS                                              *http_client-commands*
 :HttpEnvFile                                                   *:HttpEnvFile*
     Select an environment file (.env.json) to use.
 
-:HttpEnv {env}                                                     *:HttpEnv*
-    Set the current environment to use (e.g., :HttpEnv production).
+:HttpEnv                                                           *:HttpEnv*
+    Set the current environment to use.
 
 :HttpRun                                                           *:HttpRun*
     Run the HTTP request under the cursor.
@@ -67,8 +70,34 @@ setup function in your Neovim configuration:
         dry_run = "<leader>hd",
       },
     })
-<
+
 Replace the key combinations with your preferred bindings.
+
+------------------------------------------------------------------------------
+CONFIGURATION                                    *http_client-configuration*
+
+You can configure the plugin by passing options to the setup function:
+>
+    require('http_client').setup({
+      default_env_file = '.env.json',
+      request_timeout = 30000, -- 30 seconds
+      keybindings = {
+        -- ... (as shown in the keybindings section)
+      },
+    })
+
+
+------------------------------------------------------------------------------
+TELESCOPE INTEGRATION                        *http_client-telescope*
+
+This plugin includes Telescope integration for selecting environment files
+and environments:
+
+:Telescope http_client http_env_files
+    Select an environment file
+
+:Telescope http_client http_envs
+    Select an environment
 
 ------------------------------------------------------------------------------
 EXAMPLE .http FILE                                 *http_client-example-http*
@@ -84,7 +113,7 @@ EXAMPLE .http FILE                                 *http_client-example-http*
         "name": "John Doe",
         "email": "john@example.com"
     }
-<
+
 
 ------------------------------------------------------------------------------
 EXAMPLE .env.json FILE                             *http_client-example-env*
@@ -97,7 +126,7 @@ EXAMPLE .env.json FILE                             *http_client-example-env*
             "host": "https://api.example.com"
         }
     }
-<
+
 
 ------------------------------------------------------------------------------
 ENVIRONMENT FILES                            *http_client-environment-files*

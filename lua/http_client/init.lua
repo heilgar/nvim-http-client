@@ -33,7 +33,7 @@ local function set_keybindings()
         pattern = "http",
         callback = function()
             vim.keymap.set('n', M.config.keybindings.select_env_file, ':HttpEnvFile<CR>', opts)
-            vim.keymap.set('n', M.config.keybindings.set_env, ':HttpEnv ', { noremap = true, buffer = true })
+            vim.keymap.set('n', M.config.keybindings.set_env, ':HttpEnv<CR>', { noremap = true, buffer = true })
             vim.keymap.set('n', M.config.keybindings.run_request, ':HttpRun<CR>', opts)
             vim.keymap.set('n', M.config.keybindings.stop_request, ':HttpStop<CR>', opts)
             vim.keymap.set('n', M.config.keybindings.dry_run, ':HttpDryRun<CR>', opts)
