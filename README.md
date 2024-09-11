@@ -1,6 +1,29 @@
 # Neovim HTTP Request Plugin
 
-A Neovim plugin for running HTTP requests directly from .http files, with support for environment variables.
+A Neovim plugin for running HTTP requests directly from .http files, with support for environment variables. Inspired by the IntelliJ HTTP Client, this plugin aims to bring similar functionality to Neovim in an easy-to-install, easy-to-use package.
+
+This plugin allows you to work with .http files in Neovim, providing a seamless experience for developers who want to manage and execute HTTP requests directly from their editor.
+
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+  - [Configuration](#configuration)
+- [Usage](#usage)
+- [Commands](#commands)
+- [Keybindings](#keybindings)
+- [Telescope Integration](#telescope-integration)
+- [Documentation](#documentation)
+- [Examples](#examples)
+  - [Environment Files](#environment-files)
+- [Contributing](#contributing)
+- [License](#license)
+- [Screenshots](#screenshots)
+  - [Dry Run](#dry-run)
+  - [Environment File Selection](#environment-file-selection)
+  - [Environment Selection](#environment-selection)
+  - [HTTP Response](#http-response)
 
 ## Features
 
@@ -204,4 +227,22 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Screenshots
+
+### Dry Run
+![Dry Run](doc/dry_run.png)
+This screenshot shows the dry run feature, which allows you to preview the HTTP request before sending it.
+
+### Environment File Selection
+![Environment File Selection](doc/env_f_select.png)
+Here you can see the environment file selection process, where you choose the .env.json file to use for your requests.
+
+### Environment Selection
+![Environment Selection](doc/env_select.png)
+This image demonstrates the environment selection within a chosen .env.json file, allowing you to switch between different configurations.
+
+### HTTP Response
+![HTTP Response](doc/response.png)
+This screenshot displays how HTTP responses are presented after executing a request.
 

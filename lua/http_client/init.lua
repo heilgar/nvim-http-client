@@ -99,6 +99,22 @@ function M.setup(opts)
 
     setup_docs()
     set_keybindings()
+
+
+    M.health = require('http_client.health')
+    -- Register health check
+    local health = vim.health or M.health
+    if health.register then
+        -- Register the health check with the new API
+        health.register("http_client", M.health.check)
+    else
+        -- Fallback for older Neovim versions
+        vim.api.nvim_create_autocmd("VimEnter", {
+            callback = function()
+                M.health.check()
+            end,
+        })
+    end
 end
 
 return M
