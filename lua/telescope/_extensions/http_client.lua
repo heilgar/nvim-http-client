@@ -111,10 +111,17 @@ local http_env_files = function(opts)
     }):find()
 end
 
+local function health_check()
+    local health = vim.health or require("htt_client.health")
+    health.start("Telescope Extension: `http_client`")
+    health.ok("Telescope HTTP Client extension is available")
+end
+
 return require("telescope").register_extension {
     exports = {
         http_env_files = http_env_files,
         http_envs = http_envs,
     },
+    health = health_check
 }
 
