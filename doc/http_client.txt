@@ -76,15 +76,40 @@ Replace the key combinations with your preferred bindings.
 ------------------------------------------------------------------------------
 CONFIGURATION                                    *http_client-configuration*
 
-You can configure the plugin by passing options to the setup function:
+The plugin can be configured by passing a table to the setup function:
+
 >
-    require('http_client').setup({
+    require("http_client").setup({
       default_env_file = '.env.json',
       request_timeout = 30000, -- 30 seconds
+      split_direction = "right",
       keybindings = {
-        -- ... (as shown in the keybindings section)
+        select_env_file = "<leader>he",
+        set_env = "<leader>hs",
+        run_request = "<leader>hr",
+        stop_request = "<leader>hx",
+        dry_run = "<leader>hd",
+        toggle_verbose = "<leader>hv"
       },
     })
+
+
+default_env_file                              *http_client-default_env_file*
+    The default environment file to use.
+    Default: '.env.json'
+
+request_timeout                               *http_client-request_timeout*
+    The timeout for HTTP requests in milliseconds.
+    Default: 30000 (30 seconds)
+
+split_direction                                *http_client-split_direction*
+    Determines the direction in which the response buffer will open.
+    Possible values: "right", "left", "below", "above"
+    Default: "right"
+
+keybindings                                      *http_client-config-keybindings*
+    A table of keybindings for various plugin actions.
+    See |http_client-keybindings| for more details on the available actions.
 
 
 ------------------------------------------------------------------------------
