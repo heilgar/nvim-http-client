@@ -16,7 +16,21 @@ function M.display_in_buffer(content, title)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(content, '\n'))
 
         -- Open in a vertical split
-        vim.cmd('vsplit')
+        local split_cmd
+        local split_direction = require('http_client.config').get('split_direction')
+        if split_direction == "right" then
+            split_cmd = 'vsplit'
+        elseif split_direction == "left" then
+            split_cmd = 'leftabove vsplit'
+        elseif split_direction == "below" then
+            split_cmd = 'split'
+        elseif split_direction == "above" then
+            split_cmd = 'leftabove split'
+        else
+            split_cmd = 'vsplit' -- Default to right if invalid option
+        end
+
+        vim.cmd(split_cmd)
         local win = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_buf(win, buf)
 

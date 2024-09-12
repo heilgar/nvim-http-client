@@ -1,17 +1,6 @@
 local M = {}
 
-M.config = {
-    default_env_file = '.env.json',
-    request_timeout = 30000, -- 30 seconds
-    keybindings = {
-        select_env_file = "<leader>he",
-        set_env = "<leader>hs",
-        run_request = "<leader>hr",
-        stop_request = "<leader>hx",
-        dry_run = "<leader>hd",
-        toggle_verbose = "<leader>hv"
-    },
-}
+M.config = require('http_client.config')
 
 
 local function setup_docs()
@@ -32,18 +21,18 @@ local function set_keybindings()
     vim.api.nvim_create_autocmd("FileType", {
         pattern = "http",
         callback = function()
-            vim.keymap.set('n', M.config.keybindings.select_env_file, ':HttpEnvFile<CR>', opts)
-            vim.keymap.set('n', M.config.keybindings.set_env, ':HttpEnv<CR>', { noremap = true, buffer = true })
-            vim.keymap.set('n', M.config.keybindings.run_request, ':HttpRun<CR>', opts)
-            vim.keymap.set('n', M.config.keybindings.stop_request, ':HttpStop<CR>', opts)
-            vim.keymap.set('n', M.config.keybindings.dry_run, ':HttpDryRun<CR>', opts)
-            vim.keymap.set('n', M.config.keybindings.toggle_verbose, ':HttpVerbose<CR>', opts)
+            vim.keymap.set('n', M.config.get('keybindings').select_env_file, ':HttpEnvFile<CR>', opts)
+            vim.keymap.set('n', M.config.get('keybindings').set_env, ':HttpEnv<CR>', { noremap = true, buffer = true })
+            vim.keymap.set('n', M.config.get('keybindings').run_request, ':HttpRun<CR>', opts)
+            vim.keymap.set('n', M.config.get('keybindings').stop_request, ':HttpStop<CR>', opts)
+            vim.keymap.set('n', M.config.get('keybindings').dry_run, ':HttpDryRun<CR>', opts)
+            vim.keymap.set('n', M.config.get('keybindings').toggle_verbose, ':HttpVerbose<CR>', opts)
         end
     })
 end
 
 function M.setup(opts)
-    M.config = vim.tbl_deep_extend("force", M.config, opts or {})
+    M.config.setup(opts)
 
     -- Load all necessary modules
     M.environment = require('http_client.environment')
@@ -52,7 +41,7 @@ function M.setup(opts)
     M.parser = require('http_client.parser')
     M.ui = require('http_client.ui')
     M.dry_run = require('http_client.dry_run')
-    M.commands = require('http_client.commands').setup(M.config)
+    M.commands = require('http_client.commands').setup(M.config.options)
     M.v = require('http_client.verbose')
 
 
