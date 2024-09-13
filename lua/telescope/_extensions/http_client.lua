@@ -25,6 +25,16 @@ local function env_previewer()
             local env_file = http_client.environment.get_current_env_file()
             local env_data = http_client.file_utils.read_json_file(env_file)
             local env_content = vim.inspect(env_data[entry.value] or {})
+
+            -- Add preview of private environment if it exists
+            local private_file = env_file:gsub("%.env%.json$", ".private.env.json")
+            if vim.fn.filereadable(private_file) == 1 then
+                local private_env = http_client.file_utils.read_json_file(private_file)
+                if private_env and private_env[entry.value] then
+                    env_content = env_content .. "\n\nPrivate Environment:\n" .. vim.inspect(private_env[entry.value])
+                end
+            end
+
             vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, vim.split(env_content, '\n'))
             vim.api.nvim_buf_set_option(self.state.bufnr, 'filetype', 'lua')
         end,
