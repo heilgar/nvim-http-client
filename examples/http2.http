@@ -1,0 +1,17 @@
+### Get a JSON response no protocol defined
+GET {{base_url}}/json HTTP/2
+User-Agent: heilgar/nvim-http-client
+X-Private-Token: {{access_token}}
+Accept: application/json
+
+### Post a JSON request
+POST {{base_url}}/post
+User-Agent: heilgar/nvim-http-client
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 30,
+  "city": "New York"
+}
+

@@ -32,7 +32,7 @@ function M.display_dry_run(http_client)
     local content = string.format([[
 Dry Run Information (%s):
 --------------------
-%s %s
+%s %s %s
 # Status: %s
 
 # Headers:
@@ -55,6 +55,7 @@ Current request:
         request.test_name or "N/A",
         request.method,
         request.url,
+        request.http_version or "HTTP/1.1",
         request.status or "N/A",
         format_headers(request.headers),
         request.body or "No body",

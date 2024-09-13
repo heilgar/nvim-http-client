@@ -87,7 +87,8 @@ M.parse_request = function(lines)
         method = nil,
         url = nil,
         headers = {},
-        body = nil
+        body = nil,
+        http_version = nil
     }
 
     local stage = "start"
@@ -100,10 +101,16 @@ M.parse_request = function(lines)
                 stage = "body"
             end
         elseif stage == "start" then
-            local method, url = line:match("^(%S+)%s+(.+)$")
+            -- Updated regex to make HTTP version optional
+            local method, url, version = line:match("^(%S+)%s+(.+)%s+(HTTP/%S+)$")
+            if not method then
+                -- If no HTTP version, try matching without it
+                method, url = line:match("^(%S+)%s+(.+)$")
+            end
             if method and url then
                 request.method = method
                 request.url = url
+                request.http_version = version or "HTTP/1.1" -- Default to HTTP/1.1 if not specified
                 stage = "headers"
             end
         elseif stage == "headers" then

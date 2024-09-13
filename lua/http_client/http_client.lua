@@ -108,7 +108,7 @@ local function prepare_response(request, response)
     local content = string.format([[
 Response Information (%s):
 ---------------------
-%s %s
+%s %s %s
 # Status: %s
 
 # Headers:
@@ -120,6 +120,7 @@ Response Information (%s):
         request.test_name or "N/A",
         request.method,
         request.url,
+        request.http_version or "N/A",
         response.status or "N/A",
         format_headers(response.headers),
         content_type,
@@ -136,7 +137,8 @@ end
 
 M.send_request = function(request)
     vvv.debug_print("Sending request...")
-    vvv.debug_print(string.format("Method: %s, URL: %s", request.method, request.url))
+    vvv.debug_print(string.format("Method: %s, URL: %s, HTTP Version: %s", request.method, request.url,
+        request.http_version))
 
     if current_request then
         vvv.debug_print("A request is already in progress")
@@ -155,7 +157,11 @@ M.send_request = function(request)
         vvv.debug_print("No request body")
     end
 
-    current_request = curl.request({
+    if not request.url:match("^https?://") then
+        request.url = "http://" .. request.url
+    end
+
+    local curl_options = {
         url = request.url,
         method = request.method,
         body = request.body,
@@ -176,7 +182,28 @@ M.send_request = function(request)
             local pr = prepare_response(request, response)
             display_response(pr)
         end
-    })
+
+    }
+
+    -- Handle different HTTP versions
+    if request.http_version then
+        if request.http_version == "HTTP/2" then
+            curl_options.http_version = "HTTP/2"
+        elseif request.http_version == "HTTP/2 (Prior Knowledge)" then
+            curl_options.http_version = "HTTP/2"
+        elseif request.http_version == "HTTP/1.1" then
+            curl_options.http_version = "HTTP/1.1"
+        else
+            vvv.debug_print("Unknown HTTP version: " .. request.http_version)
+        end
+    end
+
+    local ssl_config = require('http_client.environment').get_ssl_config()
+    if ssl_config.verifyHostCertificate == false then
+        curl_options.insecure = true
+    end
+
+    current_request = curl.request(curl_options)
 
     if not current_request then
         vvv.debug_print("Failed to initiate request")
