@@ -21,6 +21,8 @@ function M.display_dry_run(http_client)
     request = parser.replace_placeholders(request, env)
 
     local env_file = http_client.environment.get_current_env_file() or "Not set"
+    local private_env = http_client.environment.get_current_private_env_file() or "Not set"
+
     local env_info = vim.inspect(env or {})
     local current_request = vim.inspect(http_client.http_client.get_current_request() or {})
 
@@ -42,6 +44,7 @@ Dry Run Information (%s):
 Environment Information:
 ------------------------
 Current env file: %s
+Current private env file: %s
 
 Current env:
 %s
@@ -56,6 +59,7 @@ Current request:
         format_headers(request.headers),
         request.body or "No body",
         env_file,
+        private_env,
         env_info,
         current_request
     )
