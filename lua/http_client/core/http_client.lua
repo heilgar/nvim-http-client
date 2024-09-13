@@ -1,6 +1,6 @@
 local M = {}
 local curl = require('plenary.curl')
-local vvv = require('http_client.verbose')
+local vvv = require('http_client.utils.verbose')
 
 local current_request = nil
 
@@ -131,7 +131,7 @@ Response Information (%s):
 end
 
 local function display_response(prepared_response)
-    local ui = require('http_client.ui')
+    local ui = require('http_client.ui.display')
     ui.display_in_buffer(prepared_response, "HTTP Response")
 end
 
@@ -198,7 +198,7 @@ M.send_request = function(request)
         end
     end
 
-    local ssl_config = require('http_client.environment').get_ssl_config()
+    local ssl_config = require('http_client.core.environment').get_ssl_config()
     if ssl_config.verifyHostCertificate == false then
         curl_options.insecure = true
     end

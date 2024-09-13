@@ -31,6 +31,18 @@ All notable changes to this project will be documented in this file.
 - Added get_current_private_env_file function to retrieve the current private environment file path
 - Refactored parser.lua to correctly handle HTTP version in request parsing
 - Updated http_client.lua to support different HTTP versions and SSL configurations
+### Code Restructuring
+- Reorganized project structure for improved maintainability
+  - Created `core` directory for main plugin logic
+    - Moved `parser.lua`, `http_client.lua`, and `environment.lua` into `core`
+  - Created `utils` directory for utility functions
+    - Moved `file_utils.lua` and `verbose.lua` into `utils`
+  - Created `ui` directory for user interface related code
+    - Renamed `ui.lua` to `display.lua` and moved it to `ui`
+    - Moved `dry_run.lua` into `ui`
+  - Created new `config.lua` file for centralized configuration management
+- Updated import statements across the project to reflect new file structure
+- Improved modularity and logical grouping of related functionalities
 ### Security
 - Improved handling of sensitive information by separating it into private environment files
 - Private environment files are automatically excluded from git tracking (ensure .gitignore is updated)
