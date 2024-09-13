@@ -1,0 +1,30 @@
+### Get a JSON response
+GET {{base_url}}/json
+User-Agent: heilgar/nvim-http-client
+
+### Post a JSON request
+POST {{base_url}}/post
+User-Agent: heilgar/nvim-http-client
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "age": 30,
+  "city": "New York"
+}
+
+### Put JSON data
+PUT {{base_url}}/put
+User-Agent: heilgar/nvim-http-client
+Content-Type: application/json
+
+{
+  "id": 1,
+  "title": "Updated Title",
+  "body": "This is an updated post."
+}
+
+### Delete a resource
+DELETE {{base_url}}/delete
+User-Agent: heilgar/nvim-http-client
+

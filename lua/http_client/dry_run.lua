@@ -10,14 +10,15 @@ end
 
 
 function M.display_dry_run(http_client)
-    local request = http_client.parser.get_request_under_cursor()
+    local parser = http_client.parser
+    local request = parser.get_request_under_cursor()
     if not request then
         print('No valid HTTP request found under cursor')
         return
     end
 
     local env = http_client.environment.get_current_env()
-    request = http_client.parser.replace_placeholders(request, env)
+    request = parser.replace_placeholders(request, env)
 
     local env_file = http_client.environment.get_current_env_file() or "Not set"
     local env_info = vim.inspect(env or {})
@@ -27,7 +28,7 @@ function M.display_dry_run(http_client)
     local ui = require('http_client.ui')
 
     local content = string.format([[
-Dry Run Information:
+Dry Run Information (%s):
 --------------------
 %s %s
 # Status: %s
@@ -48,6 +49,7 @@ Current env:
 Current request:
 %s
 ]],
+        request.test_name or "N/A",
         request.method,
         request.url,
         request.status or "N/A",
