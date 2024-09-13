@@ -17,6 +17,18 @@ syn match httpResponseEnvFile "Current env file: \zs.*$"
 syn match httpResponseEnvKey '"\zs[^"]\+\ze":'
 syn match httpResponseEnvValue ':\s*\zs.*$'
 
+" XML syntax
+syn include @XMLSyntax syntax/xml.vim
+syn region xmlRegion start="<\w" end="</\w\+>" contains=@XMLSyntax
+
+" Define highlight groups for XML
+hi def link xmlTag Identifier
+hi def link xmlTagName Statement
+hi def link xmlAttrib Identifier
+hi def link xmlString String
+hi def link xmlComment Comment
+
+
 hi def link httpResponseTitle Structure
 hi def link httpResponseMethod Keyword
 hi def link httpResponseHeader Identifier
