@@ -74,5 +74,12 @@ M.get_current_private_env_file = function()
     return current_private_env_file
 end
 
+M.get_ssl_config = function()
+    if current_env and current_env.SSLConfiguration then
+        return current_env.SSLConfiguration
+    end
+    return {}
+end
+
 return M
 

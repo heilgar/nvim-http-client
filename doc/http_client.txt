@@ -141,6 +141,53 @@ EXAMPLE .http FILE                                 *http_client-example-http*
 
 
 ------------------------------------------------------------------------------
+HTTP VERSIONS                                        *http_client-http-versions*
+
+The plugin supports specifying different HTTP versions for requests:
+
+- `HTTP/1.1`: Default version if not specified
+- `HTTP/2`: Enable the use of HTTP/2
+- `HTTP/2 (Prior Knowledge)`: Use HTTP/2 without HTTP/1.1 Upgrade
+
+Example usage:
+>
+    GET https://example.com HTTP/2
+    User-Agent: MyHttpClient/1.0
+
+    ###
+
+    POST https://example.com HTTP/2 (Prior Knowledge)
+    Content-Type: application/json
+
+    {
+        "key": "value"
+    }
+
+------------------------------------------------------------------------------
+SSL CONFIGURATION                                *http_client-ssl-config*
+
+For development purposes, you may need to disable certificate verification
+for hosts with self-signed or expired certificates. You can do this by
+adding an SSL configuration to your environment file.
+
+In your http-client.private.env.json file, add the following:
+
+    {
+        "your_environment_name": {
+            "SSLConfiguration": {
+                "verifyHostCertificate": false
+            }
+        }
+    }
+
+When this environment is active, the HTTP client will not verify host
+certificates for requests.
+
+Note: Only use this feature for trusted hosts in development environments.
+Disabling certificate verification can pose security risks in production.
+
+
+------------------------------------------------------------------------------
 EXAMPLE .env.json FILE                             *http_client-example-env*
 >
     {

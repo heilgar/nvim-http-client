@@ -2,6 +2,7 @@
 GET {{base_url}}/json
 User-Agent: heilgar/nvim-http-client
 X-Private-Token: {{access_token}}
+Accept: application/json
 
 ### Post a JSON request
 POST {{base_url}}/post
