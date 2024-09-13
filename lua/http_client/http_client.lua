@@ -106,7 +106,7 @@ local function prepare_response(request, response)
     end
 
     local content = string.format([[
-Response Information:
+Response Information (%s):
 ---------------------
 %s %s
 # Status: %s
@@ -117,6 +117,7 @@ Response Information:
 # Body (%s):
 %s
 ]],
+        request.test_name or "N/A",
         request.method,
         request.url,
         response.status or "N/A",
