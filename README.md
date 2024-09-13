@@ -1,8 +1,11 @@
 # Neovim HTTP Request Plugin
 
-A Neovim plugin for running HTTP requests directly from .http files, with support for environment variables. Inspired by the IntelliJ HTTP Client, this plugin aims to bring similar functionality to Neovim in an easy-to-install, easy-to-use package.
+A Neovim plugin for running HTTP requests directly from .http files, with support for environment variables. Inspired by the IntelliJ HTTP Client, this plugin brings similar functionality to Neovim in an easy-to-install and easy-to-use package.
 
-This plugin allows you to work with .http files in Neovim, providing a seamless experience for developers who want to manage and execute HTTP requests directly from their editor.
+The core goal is to ensure compatibility with .http files from IntelliJ or VSCode, allowing them to run smoothly in Neovim and vice-versa.
+
+
+**Development is ongoing, with new features added as needed or when time permits.**
 
 
 ## Table of Contents
