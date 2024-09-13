@@ -35,14 +35,14 @@ function M.setup(opts)
     M.config.setup(opts)
 
     -- Load all necessary modules
-    M.environment = require('http_client.environment')
-    M.file_utils = require('http_client.file_utils')
-    M.http_client = require('http_client.http_client')
-    M.parser = require('http_client.parser')
-    M.ui = require('http_client.ui')
-    M.dry_run = require('http_client.dry_run')
-    M.commands = require('http_client.commands').setup(M.config.options)
-    M.v = require('http_client.verbose')
+    M.environment = require('http_client.core.environment')
+    M.file_utils = require('http_client.utils.file_utils')
+    M.http_client = require('http_client.core.http_client')
+    M.parser = require('http_client.core.parser')
+    M.ui = require('http_client.ui.display')
+    M.dry_run = require('http_client.ui.dry_run')
+    M.v = require('http_client.utils.verbose')
+    M.commands = require('http_client.commands')
 
 
     -- Set up commands

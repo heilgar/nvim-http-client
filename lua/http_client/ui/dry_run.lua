@@ -27,7 +27,7 @@ function M.display_dry_run(http_client)
     local current_request = vim.inspect(http_client.http_client.get_current_request() or {})
 
 
-    local ui = require('http_client.ui')
+    local ui = require('http_client.ui.display')
 
     local content = string.format([[
 Dry Run Information (%s):

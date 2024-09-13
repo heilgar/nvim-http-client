@@ -1,10 +1,10 @@
 local M = {}
-local environment = require('http_client.environment')
-local file_utils = require('http_client.file_utils')
-local http_client = require('http_client.http_client')
-local parser = require('http_client.parser')
-local dry_run = require('http_client.dry_run')
-local vvv = require('http_client.verbose')
+local environment = require('http_client.core.environment')
+local file_utils = require('http_client.utils.file_utils')
+local http_client = require('http_client.core.http_client')
+local parser = require('http_client.core.parser')
+local dry_run = require('http_client.ui.dry_run')
+local vvv = require('http_client.utils.verbose')
 
 local config = {}
 
