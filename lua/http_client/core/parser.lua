@@ -44,9 +44,15 @@ M.get_request_under_cursor = function()
             request_end = #lines
         end
 
-        -- If no start found, cursor is before any request
+        -- If no start found, it might be the first request without a separator
         if not request_start then
-            return nil
+            request_start = 1
+            for i, line in ipairs(lines) do
+                if line:match("^###") then
+                    request_end = i - 1
+                    break
+                end
+            end
         end
     else
         -- No separators, treat the whole file as one request
