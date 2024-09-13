@@ -1,0 +1,11 @@
+### Get with query params
+GET {{base_url}}/get?name=John&age=30&city=New+York
+User-Agent: heilgar/nvim-http-client
+
+### Submit form data
+POST {{base_url}}/post
+User-Agent: heilgar/nvim-http-client
+Content-Type: application/x-www-form-urlencoded
+
+key=value&foo=bar&id=1&title=Updated+Title&body=This+is+an+updated+post.
+

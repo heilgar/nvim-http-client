@@ -1,0 +1,39 @@
+### Get XML data
+GET {{base_url}}/xml
+User-Agent: heilgar/nvim-http-client
+Accept: application/xml
+
+### Post XML data
+POST {{base_url}}/post
+User-Agent: heilgar/nvim-http-client
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<person>
+  <name>John Doe</name>
+  <age>30</age>
+  <city>New York</city>
+</person>
+
+### Put XML data
+PUT {{base_url}}/put
+User-Agent: heilgar/nvim-http-client
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<post>
+  <id>1</id>
+  <title>Updated Title</title>
+  <body>This is an updated post.</body>
+</post>
+
+### Delete XML resource
+DELETE {{base_url}}/delete
+User-Agent: heilgar/nvim-http-client
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<delete>
+  <id>1</id>
+</delete>
+
