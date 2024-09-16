@@ -99,10 +99,19 @@ M.parse_request = function(lines)
 
     local stage = "start"
     local body_lines = {}
+    local response_handler = nil
+    local in_response_handler = false
 
     for _, line in ipairs(lines) do
         line = trim(line)
-        if line == "" then
+        if line:match("^>%s*{%%") then
+            in_response_handler = true
+            response_handler = ""
+        elseif line:match("^%%}") and in_response_handler then
+            in_response_handler = false
+        elseif in_response_handler then
+            response_handler = response_handler .. line .. "\n"
+        elseif line == "" then
             if stage == "headers" then
                 stage = "body"
             end
@@ -133,6 +142,8 @@ M.parse_request = function(lines)
         request.body = table.concat(body_lines, "\n")
     end
 
+    request.response_handler = response_handler
+
     return request
 end
 
@@ -142,7 +153,7 @@ M.replace_placeholders = function(request, env)
             return nil
         end
         return (str:gsub("{{(.-)}}", function(var)
-            return env[var] or "{{" .. var .. "}}"
+            return env[var] or environment.get_global_variable(var) or "{{" .. var .. "}}"
         end))
     end
 

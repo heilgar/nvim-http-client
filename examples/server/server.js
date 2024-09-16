@@ -2,7 +2,7 @@ const http = require('http');
 const http2 = require('http2');
 const fs = require('fs');
 
-const port = 3000;
+const port = 8080;
 
 const content = {
     json: { message: "This is a dummy JSON response" },

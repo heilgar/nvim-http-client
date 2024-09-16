@@ -105,6 +105,24 @@ local function prepare_response(request, response)
         formatted_body = format_xml(formatted_body)
     end
 
+    return {
+        formatted_body = formatted_body,
+        headers = response.headers or {},
+        status = response.status or "N/A",
+        content_type = content_type,
+        response_handler = request.response_handler,
+        request = {
+            method = request.method,
+            url = request.url,
+            http_version = request.http_version or "N/A",
+            test_name = request.test_name or "N/A",
+        }
+    }
+end
+
+local function display_response(pr)
+    local ui = require('http_client.ui.display')
+
     local content = string.format([[
 Response Information (%s):
 ---------------------
@@ -117,22 +135,28 @@ Response Information (%s):
 # Body (%s):
 %s
 ]],
-        request.test_name or "N/A",
-        request.method,
-        request.url,
-        request.http_version or "N/A",
-        response.status or "N/A",
-        format_headers(response.headers),
-        content_type,
-        formatted_body
+        pr.request.test_name,
+        pr.request.method,
+        pr.request.url,
+        pr.request.http_version,
+        pr.status,
+        format_headers(pr.headers),
+        pr.content_type,
+        pr.formatted_body
     )
 
-    return content
+    ui.display_in_buffer(content, "HTTP Response")
 end
 
-local function display_response(prepared_response)
-    local ui = require('http_client.ui.display')
-    ui.display_in_buffer(prepared_response, "HTTP Response")
+local function handle_response(pr)
+    local response_handler = require('http_client.core.response_handler')
+    if pr.response_handler then
+        response_handler.execute(pr.response_handler, {
+            body = vim.json.decode(pr.formatted_body),
+            headers = pr.headers,
+            status = pr.status
+        })
+    end
 end
 
 M.send_request = function(request)
@@ -181,6 +205,7 @@ M.send_request = function(request)
             vvv.debug_print("Calling ui.display_response")
             local pr = prepare_response(request, response)
             display_response(pr)
+            handle_response(pr)
         end
 
     }

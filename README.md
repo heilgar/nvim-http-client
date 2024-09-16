@@ -15,8 +15,9 @@ The core goal is to ensure compatibility with .http files from IntelliJ or VSCod
 - [Installation](#installation)
   - [Configuration](#configuration)
 - [Usage](#usage)
-- [Commands](#commands)
-- [Keybindings](#keybindings)
+    - [Commands](#commands)
+    - [Keybindings](#keybindings)
+    - [Response handler](#response-handler)
 - [Telescope Integration](#telescope-integration)
 - [Documentation](#documentation)
 - [Examples](#examples)
@@ -110,7 +111,7 @@ You can adjust these settings to your preferences.
 3. Use the provided commands to select an environment and run requests.
 
 
-## Commands
+### Commands
 
 - `:HttpEnvFile`: Select an environment file (.env.json) to use.
 - `:HttpEnv {env}`: Set the current environment to use (e.g., `:HttpEnv production`).
@@ -119,7 +120,7 @@ You can adjust these settings to your preferences.
 - `:HttpVerbose`: Toggle verbose mode for debugging.
 - `:HttpDryRun`: Perform a dry run of the request under the cursor.
 
-## Keybindings
+### Keybindings
 
 The plugin comes with the following default keybindings:
 
@@ -161,6 +162,26 @@ To customize these keybindings, you can add the following to your Neovim configu
 ```
 
 You can change the key mappings by modifying the `keybindings` table in the setup function and updating the `keys` table accordingly.
+
+### Response Handler
+```http
+### Set Token
+POST {{base_url}}/login
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+> {%
+client.global.set("auth_token", response.body.token);
+%}
+
+### Get Protected Resource
+GET {{base_url}}/protected
+Authorization: Bearer {{auth_token}}
+```
 
 ## Telescope Integration
 
