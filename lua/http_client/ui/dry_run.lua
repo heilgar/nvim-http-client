@@ -9,23 +9,23 @@ local function format_headers(headers)
 end
 
 
-function M.display_dry_run(http_client)
+M.display_dry_run = function(http_client)
     local parser = http_client.parser
+    local environment = http_client.environment
     local request = parser.get_request_under_cursor()
     if not request then
         print('No valid HTTP request found under cursor')
         return
     end
 
-    local env = http_client.environment.get_current_env()
-    request = parser.replace_placeholders(request, env)
+    local merged_env = environment.get_current_env()
+    request = parser.replace_placeholders(request, merged_env)
 
-    local env_file = http_client.environment.get_current_env_file() or "Not set"
-    local private_env = http_client.environment.get_current_private_env_file() or "Not set"
+    local env_file = environment.get_current_env_file() or "Not set"
+    local private_env = environment.get_current_private_env_file() or "Not set"
 
-    local env_info = vim.inspect(env or {})
+    local merged_env_info = vim.inspect(merged_env)
     local current_request = vim.inspect(http_client.http_client.get_current_request() or {})
-
 
     local ui = require('http_client.ui.display')
 
@@ -46,7 +46,7 @@ Environment Information:
 Current env file: %s
 Current private env file: %s
 
-Current env:
+Environment (including global variables):
 %s
 
 Current request:
@@ -61,7 +61,7 @@ Current request:
         request.body or "No body",
         env_file,
         private_env,
-        env_info,
+        merged_env_info,
         current_request
     )
 

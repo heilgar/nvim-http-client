@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 9/16/2024
+### New Features
+- Initial support for response handler scripts
+  - Ability to execute `client.global.set(k, v)`
+  - Set global variables based on response data
+- Global variables functionality
+  - Set and use variables that persist across requests within a session
+  - Global variables take precedence over environment variables
+
 
 ## 9/13/2024
 ### New Features
