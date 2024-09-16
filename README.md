@@ -7,6 +7,7 @@ The core goal is to ensure compatibility with .http files from IntelliJ or VSCod
 
 **Development is ongoing, with new features added as needed or when time permits.**
 
+![Lua](https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua)
 
 ## Table of Contents
 
