@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New feature: Generate and display curl command in dry run output
 - New command: `:HttpCopyCurl` to copy curl command for the request under cursor
 - New keybinding: `<leader>hc` to copy curl command
+- Support for comments in .http and .rest files
+    - Full line comments starting with '#'
+    - Inline comments from '#' to end of line
+
 
 ## [1.0.0] 2024-09-17
 ### Added
