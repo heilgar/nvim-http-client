@@ -1,5 +1,13 @@
 ## Contributiong Guidelines
 
+Thank you for your interest in contributing to nvim-http-client! We welcome contributions from everyone.
+
+## Making Changes
+1. Make your changes in your branch
+2. Add or update tests as necessary
+3. Ensure all tests pass by running `make test`
+4. Update documentation if you're changing functionality.
+
 ### Updating the Changelog
 
 For every pull request, please ensure that you update the `CHANGELOG.md` file.

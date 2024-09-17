@@ -2,7 +2,7 @@ local health = vim.health or require("health")
 
 local M = {}
 
-function M.check()
+M.check = function()
     health.start("http_client")
 
     -- Check if required dependencies are available
