@@ -1,13 +1,24 @@
-For doc/http_client.txt:
-
-```text
 *http_client.txt* A Neovim plugin for running HTTP requests from .http files
+
+==============================================================================
+CONTENTS                                              *http_client-contents*
+
+1. Usage ................ |http_client-usage|
+2. Commands ............. |http_client-commands|
+3. Keybindings .......... |http_client-keybindings|
+4. Configuration ........ |http_client-configuration|
+5. Telescope Integration  |http_client-telescope|
+6. HTTP Versions ........ |http_client-http-versions|
+7. SSL Configuration ... |http_client-ssl-config|
+8. Environment Files ... |http_client-environment-files|
+9. Response Handlers ... |http_client-response-handlers|
+10. Global Variables ... |http_client-global-variables|
 
 ==============================================================================
 USAGE                                                    *http_client-usage*
 
 This plugin allows you to run HTTP requests directly from .http files, with
-support for environment variables.
+support for environment variables, response handlers, and global variables.
 
 1. Create a .http file with your HTTP requests.
 2. Create a .env.json file with your environments.
@@ -111,7 +122,6 @@ keybindings                                      *http_client-config-keybindings
     A table of keybindings for various plugin actions.
     See |http_client-keybindings| for more details on the available actions.
 
-
 ------------------------------------------------------------------------------
 TELESCOPE INTEGRATION                        *http_client-telescope*
 
@@ -123,22 +133,6 @@ and environments:
 
 :Telescope http_client http_envs
     Select an environment
-
-------------------------------------------------------------------------------
-EXAMPLE .http FILE                                 *http_client-example-http*
->
-    GET {{host}}/api/users
-
-    ###
-
-    POST {{host}}/api/users
-    Content-Type: application/json
-
-    {
-        "name": "John Doe",
-        "email": "john@example.com"
-    }
-
 
 ------------------------------------------------------------------------------
 HTTP VERSIONS                                        *http_client-http-versions*
@@ -186,9 +180,17 @@ certificates for requests.
 Note: Only use this feature for trusted hosts in development environments.
 Disabling certificate verification can pose security risks in production.
 
-
 ------------------------------------------------------------------------------
-EXAMPLE .env.json FILE                             *http_client-example-env*
+ENVIRONMENT FILES                            *http_client-environment-files*
+
+Environment files (.env.json) allow you to define different sets of variables
+for your HTTP requests. The plugin will look for these files in your project
+root directory.
+
+The "*default" environment is used as a base, and other environments will
+override its values.
+
+Example .env.json file:
 >
     {
         "*default": {
@@ -199,16 +201,43 @@ EXAMPLE .env.json FILE                             *http_client-example-env*
         }
     }
 
+Private environment files (.private.env.json) can be used for sensitive
+information and are automatically ignored by git.
 
 ------------------------------------------------------------------------------
-ENVIRONMENT FILES                            *http_client-environment-files*
+RESPONSE HANDLERS                            *http_client-response-handlers*
 
-Environment files (.env.json) allow you to define different sets of variables
-for your HTTP requests. The plugin will look for these files in your project
-root directory.
+Response handler scripts allow you to perform actions after receiving a
+response. You can use these scripts to set global variables, process data,
+or perform any other post-request operations.
 
-The "*default" environment is used as a base, and other environments will
-override its values.
+To add a response handler script, use the following syntax in your .http file:
+>
+    ### My Request
+    GET http://api.example.com/data
+
+    > {%
+    client.global.set("my_variable", response.body.some_value);
+    %}
+
+The script inside {% %} will be executed after the response is received.
+
+------------------------------------------------------------------------------
+GLOBAL VARIABLES                              *http_client-global-variables*
+
+Global variables can be set using response handler scripts and persist across
+requests within the same Neovim session. They can be used in subsequent
+requests just like environment variables.
+
+To set a global variable:
+>
+    client.global.set("variable_name", "value");
+
+To use a global variable in a request:
+>
+    GET http://api.example.com/{{variable_name}}
+
+Global variables take precedence over environment variables with the same name.
 
 ==============================================================================
 vim:ft=help:et:ts=4:sw=4:sts=4:norl:
