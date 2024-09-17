@@ -27,6 +27,7 @@ local function set_keybindings()
             vim.keymap.set('n', M.config.get('keybindings').stop_request, ':HttpStop<CR>', opts)
             vim.keymap.set('n', M.config.get('keybindings').dry_run, ':HttpDryRun<CR>', opts)
             vim.keymap.set('n', M.config.get('keybindings').toggle_verbose, ':HttpVerbose<CR>', opts)
+            vim.keymap.set('n', M.config.get('keybindings').copy_curl, ':HttpCopyCurl<CR>', opts)
         end
     })
 end
@@ -90,6 +91,12 @@ M.setup = function(opts)
         M.dry_run.display_dry_run(M)
     end, {
         desc = 'Perform a dry run of the HTTP request without sending it.'
+    })
+
+    vim.api.nvim_create_user_command('HttpCopyCurl', function()
+        M.commands.utils.copy_curl()
+    end, {
+        desc = 'Copy curl command for the HTTP request under cursor.'
     })
 
 
