@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## 9/16/2024
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+
+## [1.0.0] 2024-09-16
 ### New Features
 - Initial support for response handler scripts
   - Ability to execute `client.global.set(k, v)`
@@ -22,7 +26,7 @@ All notable changes to this project will be documented in this file.
   - Created a new `commands/init.lua` to manage command modules
 - Updated `init.lua` to use the new command structure
 
-## 9/13/2024
+## [1.0.0] - 2024-09-13
 ### New Features
 - Added support for private environment files (.private.env.json)
   - Private environment files are now automatically detected and loaded
@@ -76,7 +80,7 @@ All notable changes to this project will be documented in this file.
 - To use private environments, create a .private.env.json file alongside your existing .env.json file
 - When using self-signed certificates in development, you can now disable certificate verification in your environment configuration
 
-## Initial
+## [1.0.0]
 
 ### Added
 - HTTP Request Parsing and Execution
