@@ -255,6 +255,12 @@ The `*default` environment is used as a base, and other environments will overri
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+1. Read our [Contributing Guidelines](.github/CONTRIBUTING.md).
+2. Ensure you've updated the `CHANGELOG.md` file with your changes.
+<!-- 3. Make sure your code adheres to the existing style. -->
+<!-- 4. Write or update tests as necessary. -->
+<!-- 5. Ensure the test suite passes. -->
+<!---->
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
