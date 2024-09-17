@@ -1,5 +1,6 @@
 local M = {}
 local environment = require('http_client.core.environment')
+local curl_generator = require('http_client.core.curl_generator')
 
 local function format_headers(headers)
     local formatted = {}
@@ -34,6 +35,7 @@ M.display_dry_run = function(http_client)
     local merged_env_info = vim.inspect(merged_env)
     local current_request = vim.inspect(http_client.http_client.get_current_request() or {})
 
+    local curl_command = curl_generator.generate_curl(request)
 
     local ui = require('http_client.ui.display')
 
@@ -48,6 +50,9 @@ Dry Run Information (%s):
 %s
 
 # Body:
+%s
+
+# Curl command:
 %s
 
 Environment Information:
@@ -69,6 +74,7 @@ Current request:
         request.status or "N/A",
         format_headers(request.headers),
         request.body or "No body",
+        curl_command,
         env_file,
         private_env,
         merged_env_info,

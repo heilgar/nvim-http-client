@@ -120,6 +120,7 @@ You can adjust these settings to your preferences.
 - `:HttpStop`: Stop the currently running HTTP request.
 - `:HttpVerbose`: Toggle verbose mode for debugging.
 - `:HttpDryRun`: Perform a dry run of the request under the cursor.
+- `:HttpCopyCurl`: Copy the curl command for the HTTP request under the cursor.
 
 ### Keybindings
 
@@ -131,6 +132,7 @@ The plugin comes with the following default keybindings:
 - `<leader>hx`: Stop running HTTP request
 - `<leader>hv`: Toggle verbose mode
 - `<leader>hd`: Perform dry run
+- `<leader>hc`: Copy curl command for HTTP request under cursor
 
 To customize these keybindings, you can add the following to your Neovim configuration:
 
