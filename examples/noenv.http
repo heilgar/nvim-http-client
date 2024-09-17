@@ -1,10 +1,10 @@
 ### Get XML data
-GET {{base_url}}/xml
+GET https://httpbin.org/xml
 User-Agent: heilgar/nvim-http-client
 Accept: application/xml
 
 ### Post XML data
-POST {{base_url}}/post
+POST https://httpbin.org/post
 User-Agent: heilgar/nvim-http-client
 Content-Type: application/xml
 Accept: application/xml
@@ -17,7 +17,7 @@ Accept: application/xml
 </person>
 
 ### Put XML data
-PUT {{base_url}}/put
+PUT https://httpbin.org/put
 User-Agent: heilgar/nvim-http-client
 Content-Type: application/xml
 Accept: application/xml
@@ -30,7 +30,7 @@ Accept: application/xml
 </post>
 
 ### Delete XML resource
-DELETE {{base_url}}/delete
+DELETE https://httpbin.org/delete
 User-Agent: heilgar/nvim-http-client
 Content-Type: application/xml
 Accept: application/xml
