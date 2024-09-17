@@ -31,7 +31,7 @@ local function set_keybindings()
     })
 end
 
-function M.setup(opts)
+M.setup = function(opts)
     M.config.setup(opts)
 
     -- Load all necessary modules
@@ -70,7 +70,7 @@ function M.setup(opts)
         desc = 'Run all HTTP requests in the current file.'
     })
 
- vim.api.nvim_create_user_command('HttpStop', function()
+    vim.api.nvim_create_user_command('HttpStop', function()
         M.commands.request.stop_request()
     end, {
         desc = 'Stop the currently running HTTP request.'
@@ -86,7 +86,7 @@ function M.setup(opts)
         desc = 'Toggle verbose mode for HTTP request.'
     })
 
-       vim.api.nvim_create_user_command('HttpDryRun', function()
+    vim.api.nvim_create_user_command('HttpDryRun', function()
         M.dry_run.display_dry_run(M)
     end, {
         desc = 'Perform a dry run of the HTTP request without sending it.'
