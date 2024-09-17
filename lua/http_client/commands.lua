@@ -96,6 +96,15 @@ M.run_request = function()
     end
 
     local env = environment.get_current_env()
+    local env_needed = environment.env_variables_needed(request)
+
+    if env_needed and not next(env) then
+        print(
+            'Environment variables are needed but not set. Please select an environment file or set properties via response handler.'
+        )
+       return
+    end
+
     request = parser.replace_placeholders(request, env)
 
     if verbose then
@@ -134,6 +143,36 @@ end
 
 M.dry_run = function()
     dry_run.display_dry_run(M)
+end
+
+M.run_all = function()
+ local verbose = vvv.get_verbose_mode()
+    vvv.set_verbose_mode(verbose)
+
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    local requests = parser.parse_all_requests(lines)
+    local results = {}
+    local env = environment.get_current_env()
+
+    for _, request in ipairs(requests) do
+        local env_needed = environment.env_variables_needed(request)
+        if env_needed and not next(env) then
+            table.insert(results, string.format("SKIP: %s %s - Environment variables needed but not set", request.method, request.url))
+        else
+            request = parser.replace_placeholders(request, env)
+            local response = http_client.send_request_sync(request)
+            local result = string.format("%s: %s %s %s %s",
+                response.status < 400 and "OK" or "ERR",
+                request.method,
+                request.url,
+                request.http_version or "HTTP/1.1",
+                response.status)
+            table.insert(results, result)
+        end
+    end
+
+    local ui = require('http_client.ui.display')
+    ui.display_in_buffer(table.concat(results, "\n"), "HTTP Run All Results")
 end
 
 return M

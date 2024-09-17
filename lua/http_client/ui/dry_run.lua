@@ -1,4 +1,5 @@
 local M = {}
+local environment = require('http_client.core.environment')
 
 local function format_headers(headers)
     local formatted = {}
@@ -11,7 +12,6 @@ end
 
 M.display_dry_run = function(http_client)
     local parser = http_client.parser
-    local environment = http_client.environment
     local request = parser.get_request_under_cursor()
     if not request then
         print('No valid HTTP request found under cursor')
@@ -19,6 +19,13 @@ M.display_dry_run = function(http_client)
     end
 
     local merged_env = environment.get_current_env()
+    local env_needed = environment.env_variables_needed(request)
+    local env_warning = ""
+
+    if env_needed and not next(merged_env) then
+        env_warning = "WARNING: Environment variables are needed but not set.\n"
+    end
+
     request = parser.replace_placeholders(request, merged_env)
 
     local env_file = environment.get_current_env_file() or "Not set"
@@ -27,9 +34,11 @@ M.display_dry_run = function(http_client)
     local merged_env_info = vim.inspect(merged_env)
     local current_request = vim.inspect(http_client.http_client.get_current_request() or {})
 
+
     local ui = require('http_client.ui.display')
 
     local content = string.format([[
+%s
 Dry Run Information (%s):
 --------------------
 %s %s %s
@@ -52,6 +61,7 @@ Environment (including global variables):
 Current request:
 %s
 ]],
+        env_warning,
         request.test_name or "N/A",
         request.method,
         request.url,

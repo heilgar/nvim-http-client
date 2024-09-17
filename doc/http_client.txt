@@ -45,6 +45,9 @@ COMMANDS                                              *http_client-commands*
 :HttpDryRun                                                     *:HttpDryRun*
     Perform a dry run of the request under the cursor.
 
+:HttpRunAll                                                     *:HttpRunAll*
+    Run all HTTP requests in the current file.
+
 ------------------------------------------------------------------------------
 KEYBINDINGS                                        *http_client-keybindings*
 
@@ -238,6 +241,18 @@ To use a global variable in a request:
     GET http://api.example.com/{{variable_name}}
 
 Global variables take precedence over environment variables with the same name.
+
+------------------------------------------------------------------------------
+RUNNING WITHOUT ENVIRONMENT                 *http_client-no-environment*
+
+The plugin now allows running requests without selecting an environment file.
+If environment variables are needed but not set, a message will be displayed
+suggesting to select an environment file or set properties via a response
+handler.
+
+Dry runs can be executed even if no environment file is selected. In this case,
+a warning will be displayed in the dry run output if environment variables are
+needed but not set.
 
 ==============================================================================
 vim:ft=help:et:ts=4:sw=4:sts=4:norl:

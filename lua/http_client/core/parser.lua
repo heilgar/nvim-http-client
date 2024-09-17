@@ -1,4 +1,5 @@
 local M = {}
+local environment = require('http_client.core.environment')
 
 local function trim(s)
     return s:match("^%s*(.-)%s*$")
@@ -145,6 +146,30 @@ M.parse_request = function(lines)
     request.response_handler = response_handler
 
     return request
+end
+
+M.parse_all_requests = function(lines)
+    local requests = {}
+    local current_request = {}
+    local in_request = false
+
+    for _, line in ipairs(lines) do
+        if line:match("^###") then
+            if in_request and #current_request > 0 then
+                table.insert(requests, M.parse_request(current_request))
+                current_request = {}
+            end
+            in_request = true
+        elseif in_request then
+            table.insert(current_request, line)
+        end
+    end
+
+    if #current_request > 0 then
+        table.insert(requests, M.parse_request(current_request))
+    end
+
+    return requests
 end
 
 M.replace_placeholders = function(request, env)
