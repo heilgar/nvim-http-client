@@ -11,10 +11,16 @@ All notable changes to this project will be documented in this file.
   - Set and use variables that persist across requests within a session
   - Global variables take precedence over environment variables
 - New command `:HttpRunAll` to run all requests in the current file
-- Warning message when environment variables are needed but not set
-### Fixes
-- Ability to run requests without selecting an environment file
-- Dry run execution even when no environment file is selected
+### Changes
+- Updated request execution to work without selecting an environment file
+- Improved dry run functionality to execute even when no environment file is selected
+### Improvements
+- Added warning message when environment variables are needed but not set
+### Code Improvements
+- Refactored command structure for better organization:
+  - Split commands into separate files: `request.lua`, `select_env.lua`
+  - Created a new `commands/init.lua` to manage command modules
+- Updated `init.lua` to use the new command structure
 
 ## 9/13/2024
 ### New Features
