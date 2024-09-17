@@ -260,6 +260,22 @@ Dry runs can be executed even if no environment file is selected. In this case,
 a warning will be displayed in the dry run output if environment variables are
 needed but not set.
 
+------------------------------------------------------------------------------
+COMMENTS                                              *http_client-comments*
+
+The plugin now supports comments in .http and .rest files. Comments can be used
+to add explanations or temporarily disable parts of requests.
+
+- Full line comments start with '#' at the beginning of the line
+- Inline comments start with '#' and continue to the end of the line
+
+Examples:
+
+# This is a full line comment
+GET https://api.example.com/users # This is an inline comment
+
+Comments are ignored when parsing and executing requests.
+
 ==============================================================================
 vim:ft=help:et:ts=4:sw=4:sts=4:norl:
 
