@@ -12,6 +12,14 @@ local function extract_test_name(lines)
     return ""
 end
 
+local function remove_comment(line)
+    local comment_start = line:find("#")
+    if comment_start then
+        return line:sub(1, comment_start - 1):match("^%s*(.-)%s*$") -- Trim and remove comment part
+    end
+    return line:match("^%s*(.-)%s*$")                               -- Trim if no comment
+end
+
 M.get_request_under_cursor = function()
     local current_line = vim.api.nvim_win_get_cursor(0)[1]
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
@@ -21,7 +29,7 @@ M.get_request_under_cursor = function()
 
     -- First pass: check if there are any ### separators
     for _, line in ipairs(lines) do
-        if line:match("^###") then
+        if line:match("^###") and not line:match("^###%s*#") then
             has_separators = true
             break
         end
@@ -30,7 +38,7 @@ M.get_request_under_cursor = function()
     if has_separators then
         -- Find the request that contains the cursor
         for i, line in ipairs(lines) do
-            if line:match("^###") then
+            if line:match("^###") and not line:match("^###%s*#") then
                 if i <= current_line then
                     request_start = i
                 else
@@ -49,7 +57,7 @@ M.get_request_under_cursor = function()
         if not request_start then
             request_start = 1
             for i, line in ipairs(lines) do
-                if line:match("^###") then
+                if line:match("^###") and not line:match("^###%s*#") then
                     request_end = i - 1
                     break
                 end
@@ -105,6 +113,7 @@ M.parse_request = function(lines)
 
     for _, line in ipairs(lines) do
         line = trim(line)
+
         if line:match("^>%s*{%%") then
             in_response_handler = true
             response_handler = ""
@@ -117,29 +126,34 @@ M.parse_request = function(lines)
                 stage = "body"
             end
         elseif stage == "start" then
-            -- Updated regex to make HTTP version optional
+            line = remove_comment(line)
             local method, url, version = line:match("^(%S+)%s+(.+)%s+(HTTP/%S+)$")
             if not method then
-                -- If no HTTP version, try matching without it
                 method, url = line:match("^(%S+)%s+(.+)$")
             end
             if method and url then
                 request.method = method
                 request.url = url
-                request.http_version = version or "HTTP/1.1" -- Default to HTTP/1.1 if not specified
+                request.http_version = version or "HTTP/1.1"
                 stage = "headers"
             end
         elseif stage == "headers" then
+            line = remove_comment(line)
             local key, value = line:match("^([^:]+):%s*(.+)$")
             if key and value then
-                request.headers[trim(key)] = trim(value)
+                key = trim(key)
+                value = remove_comment(value)
+                value = trim(value)
+                if value ~= "" then
+                    request.headers[key] = value
+                end
             end
         elseif stage == "body" then
-            table.insert(body_lines, line)
+            table.insert(body_lines, remove_comment(line))
         end
     end
 
-    if #body_lines > 0 then
+    if #body_lines > 0 and request.method ~= 'GET' then
         request.body = table.concat(body_lines, "\n")
     end
 

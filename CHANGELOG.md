@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] 2024-09-17
+### Added
+- New feature: Generate and display curl command in dry run output
+- New command: `:HttpCopyCurl` to copy curl command for the request under cursor
+- New keybinding: `<leader>hc` to copy curl command
+- Support for comments in .http and .rest files
+    - Full line comments starting with '#'
+    - Inline comments from '#' to end of line
+
+
 ## [1.0.0] 2024-09-17
 ### Added
 - Comprehensive test suite
