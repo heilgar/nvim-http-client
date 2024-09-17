@@ -10,7 +10,8 @@ M.defaults = {
         run_request = "<leader>hr",
         stop_request = "<leader>hx",
         dry_run = "<leader>hd",
-        toggle_verbose = "<leader>hv"
+        toggle_verbose = "<leader>hv",
+        copy_curl = "<leader>hc",
     },
 }
 
