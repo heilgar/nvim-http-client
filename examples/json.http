@@ -1,7 +1,7 @@
 ### Get a JSON response
 GET {{base_url}}/json
 User-Agent: heilgar/nvim-http-client
-X-Private-Token: {{access_token}}
+X-Private-Token: {{token}}
 Accept: application/json
 
 ### Post a JSON request
@@ -15,6 +15,10 @@ Content-Type: application/json
   "city": "New York"
 }
 
+> {%
+    client.global.set("city", response.body.city)
+%}
+
 ### Put JSON data
 PUT {{base_url}}/put
 User-Agent: heilgar/nvim-http-client
@@ -24,6 +28,7 @@ Content-Type: application/json
   "id": 1,
   "title": "Updated Title",
   "body": "This is an updated post."
+  "city": {{city}}
 }
 
 ### Delete a resource
