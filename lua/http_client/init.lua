@@ -84,6 +84,12 @@ function M.setup(opts)
         desc = 'Perform a dry run of the HTTP request without sending it.'
     })
 
+    vim.api.nvim_create_user_command('HttpRunAll', function()
+        M.commands.run_all()
+    end, {
+    desc = 'Run all HTTP requests in the current file.'
+})
+
 
 
     setup_docs()

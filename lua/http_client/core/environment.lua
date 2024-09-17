@@ -104,5 +104,27 @@ M.get_global_variable = function(key)
     return global_variables[key]
 end
 
+M.env_variables_needed = function (request)
+    local function check_for_placeholders(str)
+        return str and str:match("{{.-}}")
+    end
+
+    if check_for_placeholders(request.url) then
+        return true
+    end
+
+    for _, header_value in pairs(request.headers) do
+        if check_for_placeholders(header_value) then
+            return true
+        end
+    end
+
+    if check_for_placeholders(request.body) then
+        return true
+    end
+
+    return false
+end
+
 return M
 

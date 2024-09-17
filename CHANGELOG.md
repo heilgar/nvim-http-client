@@ -10,7 +10,11 @@ All notable changes to this project will be documented in this file.
 - Global variables functionality
   - Set and use variables that persist across requests within a session
   - Global variables take precedence over environment variables
-
+- New command `:HttpRunAll` to run all requests in the current file
+- Warning message when environment variables are needed but not set
+### Fixes
+- Ability to run requests without selecting an environment file
+- Dry run execution even when no environment file is selected
 
 ## 9/13/2024
 ### New Features

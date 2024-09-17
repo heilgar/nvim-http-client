@@ -256,5 +256,36 @@ M.get_current_request = function()
     return current_request
 end
 
+M.send_request_sync = function(request)
+    local response = {}
+    local curl_options = {
+        url = request.url,
+        method = request.method,
+        body = request.body,
+        headers = request.headers,
+    }
+
+    if request.http_version then
+        if request.http_version == "HTTP/2" then
+            curl_options.http_version = "HTTP/2"
+        elseif request.http_version == "HTTP/2 (Prior Knowledge)" then
+            curl_options.http_version = "HTTP/2"
+        elseif request.http_version == "HTTP/1.1" then
+            curl_options.http_version = "HTTP/1.1"
+        end
+    end
+
+    local ssl_config = require('http_client.core.environment').get_ssl_config()
+    if ssl_config.verifyHostCertificate == false then
+        curl_options.insecure = true
+    end
+
+    response = curl.get(curl_options)
+    local pr = prepare_response(request, response)
+    handle_response(pr)
+
+    return response
+end
+
 return M
 

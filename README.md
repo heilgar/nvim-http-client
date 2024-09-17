@@ -116,6 +116,7 @@ You can adjust these settings to your preferences.
 - `:HttpEnvFile`: Select an environment file (.env.json) to use.
 - `:HttpEnv {env}`: Set the current environment to use (e.g., `:HttpEnv production`).
 - `:HttpRun`: Run the HTTP request under the cursor.
+- `:HttpRunAll`: Run all HTTP requests in the current file.
 - `:HttpStop`: Stop the currently running HTTP request.
 - `:HttpVerbose`: Toggle verbose mode for debugging.
 - `:HttpDryRun`: Perform a dry run of the request under the cursor.
@@ -182,6 +183,11 @@ client.global.set("auth_token", response.body.token);
 GET {{base_url}}/protected
 Authorization: Bearer {{auth_token}}
 ```
+
+### Running Without Environment
+You can now run requests without selecting an environment file. If environment variables are needed but not set, the plugin will display a message suggesting to select an environment file or set properties via a response handler.
+
+Dry runs can be executed even if no environment file is selected. In this case, a warning will be displayed in the dry run output if environment variables are needed but not set.
 
 ## Telescope Integration
 
