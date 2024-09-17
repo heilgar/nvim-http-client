@@ -29,7 +29,7 @@ describe("Parser", function()
             assert.is_not_nil(request)
             assert.are.equal(request.method, "GET")
             assert.are.equal(request.url, "/test1")
-            assert.are.equal(request.body, "Body1")
+            assert.are.equal(request.body, nil)
         end)
 
         it("should handle cases where cursor is on line before separator", function()
@@ -91,7 +91,7 @@ describe("Parser", function()
             assert.are.equal(request.url, "/test")
             assert.are.equal(request.http_version, "HTTP/1.1")
             assert.are.same(request.headers, { Header1 = "Value1", Header2 = "Value2" })
-            assert.are.equal(request.body, "Body")
+            assert.are.equal(request.body, nil)
         end)
 
         it("should parse a basic GET request", function()
@@ -174,6 +174,35 @@ describe("Parser", function()
                 response_handler = "print(response.body)\n"
             }, request)
         end)
+
+        it("should handle a GET request with query parameters", function()
+            local lines = {
+                "GET /api/users?page=1&limit=10 HTTP/1.1",
+                "Host: example.com",
+                ""
+            }
+            local request = parser.parse_request(lines)
+            assert.are.same({
+                method = "GET",
+                url = "/api/users?page=1&limit=10",
+                http_version = "HTTP/1.1",
+                headers = {
+                    Host = "example.com"
+                },
+                body = nil
+            }, request)
+        end)
+
+        it("should handle comment on header line", function()
+            local lines = {
+                "GET https://test.com/",
+                "User-Agent: heilgar/http-client",
+                "#X-Not-in: false"
+            }
+
+            local request = parser.parse_request(lines)
+            assert.are.equal(request.headers['#X-Not-in'], nil)
+        end)
     end)
 
     describe("parse_all_requests", function()
@@ -197,6 +226,75 @@ describe("Parser", function()
             assert.are.equal(requests[1].url, "/test1")
             assert.are.equal(requests[2].method, "POST")
             assert.are.equal(requests[2].url, "/test2")
+        end)
+
+        it("should parse multiple requests correctly with comments", function()
+            local lines = {
+                "### Test 1",
+                "# This is a comment",
+                "GET /test1 HTTP/1.1",
+                "Header1: Value1 # Inline comment",
+                "",
+                "Body1",
+                "### Test 2",
+                "POST /test2 HTTP/1.1 # Another comment",
+                "Header2: Value2",
+                "",
+                "Body2 # Not a comment in body"
+            }
+
+            local requests = parser.parse_all_requests(lines)
+            assert.are.equal(#requests, 2)
+            assert.are.equal(requests[1].method, "GET")
+            assert.are.equal(requests[1].url, "/test1")
+            assert.are.equal(requests[1].headers["Header1"], "Value1")
+            assert.are.equal(requests[2].method, "POST")
+            assert.are.equal(requests[2].url, "/test2")
+            assert.are.equal(requests[2].body, "Body2")
+        end)
+
+        it("should handle requests with mixed inline comments and empty lines", function()
+            local lines = {
+                "### Request 1",
+                "GET /resource1 HTTP/1.1",          -- Request line
+                "# This is a comment",
+                "Header1: Value1 # Inline comment", -- Header with inline comment
+                "",                                 -- Empty line
+                "Body1 # Comment in body",          -- Body with comment
+                "### Request 2",
+                "POST /resource2 HTTP/1.1",
+                "Header2: Value2",
+                "Header3: Value3 # Another inline comment",
+                "",              -- Empty line
+                "Body2",         -- Body without comments
+                "",              -- Extra empty line
+                "### Request 3", -- Third request
+                "",
+                "# Another comment",
+                "PUT /resource3 HTTP/1.1",
+                "",     -- Empty line, no headers
+                "Body3" -- Body without comments
+            }
+
+            local requests = parser.parse_all_requests(lines)
+
+            assert.are.equal(#requests, 3)
+
+            assert.are.equal(requests[1].method, "GET")
+            assert.are.equal(requests[1].url, "/resource1")
+            assert.are.equal(requests[1].headers["Header1"], "Value1")
+            assert.are.equal(requests[1].body, nil)
+
+            assert.are.equal(requests[2].method, "POST")
+            assert.are.equal(requests[2].url, "/resource2")
+            assert.are.equal(requests[2].headers["Header2"], "Value2")
+            assert.are.equal(requests[2].headers["Header3"], "Value3")
+            assert.are.equal(requests[2].body, "Body2")
+
+            assert.are.equal(requests[3].method, "PUT")
+            assert.are.equal(requests[3].url, "/resource3")
+            assert.is_nil(requests[3].headers["Header2"]) -- No headers
+            assert.are.equal(requests[3].body, "Body3")
         end)
     end)
 
