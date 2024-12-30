@@ -12,8 +12,7 @@ The core goal is to ensure compatibility with .http files from IntelliJ or VSCod
 ## Table of Contents
 
 - [Features](#features)
-- [Installation](#installation)
-  - [Configuration](#configuration)
+- [Installation and configuration](#installation)
 - [Usage](#usage)
     - [Commands](#commands)
     - [Keybindings](#keybindings)
@@ -44,7 +43,7 @@ The core goal is to ensure compatibility with .http files from IntelliJ or VSCod
 - Telescope integration for environment selection
 - Compatible with [JetBrains HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) and [VSCode Restclient](https://github.com/Huachao/vscode-restclient)
 
-## Installation
+## Installation and Configuration
 
 This plugin is designed to be installed with [Lazy.nvim](https://github.com/folke/lazy.nvim).
 
@@ -58,14 +57,11 @@ Add the following to your Neovim configuration:
   },
   config = function()
     require("http_client").setup({
-      -- Optional: Configure default options here
+        create_keybindings = false -- Disable default keybindings completely
     })
   end,
 }
 ```
-
-### Configuration
-
 This plugin can be configured automatically using the `after/plugin` directory. The default configuration is set in `after/plugin/http_client.lua`. You can override these settings by creating your own `after/plugin/http_client.lua` file in your Neovim configuration directory.
 
 Example configuration:
@@ -121,6 +117,15 @@ You can adjust these settings to your preferences.
 - `:HttpVerbose`: Toggle verbose mode for debugging.
 - `:HttpDryRun`: Perform a dry run of the request under the cursor.
 - `:HttpCopyCurl`: Copy the curl command for the HTTP request under the cursor.
+
+### Response Window
+Responses are displayed in a dedicated split window with the following features:
+- Each response creates a new tab with timestamp
+- Latest 10 responses are preserved
+- Navigation:
+    - `H` - Previous response
+    - `L` - Next response
+    - `q` or `<Esc>` - Close response window
 
 ### Keybindings
 
