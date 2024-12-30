@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] 2024-12-30
+### Added
+- Resopnse window management
+    - New tab-based interface for resopnse history
+    - Timestamp-based tab naming
+    - Navigation between response with H/L keys
+    - Maximum 10 most recent responses preserved
+### Changed
+- Response display now uses a single split window
+    - All responses appear in the same window as tabs
+    - Improved window management and cleanup
+    - Better response history organization
+
+- Optimized buffer management for response history
+- Enhanced navigation between response tabs
+
+### Improved
+- Response window behavior and consistency
+- Buffer cleanup and management
+- Tab navigation user experience
+
+## [1.1.1] 2024-12-10
+### Changed
+- Added `create_keybindings` option to control creation of default keybindings
+- Modified plugin initialization to prevent automatic setup with defaults
+- Default keybindings are now configurable and can be disabled completely
+- Fixed plugin setup to properly handle user configurations
+
 ## [1.1.0] 2024-09-17
 ### Added
 - New feature: Generate and display curl command in dry run output
