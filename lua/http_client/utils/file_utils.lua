@@ -1,4 +1,5 @@
 local M = {}
+local Path = require('plenary.path')
 
 M.find_files = function(pattern)
     local handle = io.popen('find . -name "' .. pattern .. '"')
@@ -27,6 +28,29 @@ M.read_json_file = function(file_path)
     if not ok then return nil end
 
     return parsed
+end
+
+M.write_file = function(filename, content)
+    local path = Path:new(filename)
+
+    local parent = path:parent()
+    local mkdir_ok, mkdir_err = pcall(function()
+        parent:mkdir({ parents = true })
+    end)
+
+    if not mkdir_ok then
+        return false, string.format("Failed to create directory: %s", mkdir_err)
+    end
+
+    local write_ok, write_err = pcall(function()
+        path:write(content, 'w')
+    end)
+
+    if not write_ok then
+        return false, string.format("Failed to write file: %s", write_err)
+    end
+
+    return true, nil
 end
 
 return M

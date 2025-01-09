@@ -61,7 +61,7 @@ M.stop_request = function()
 end
 
 M.run_all = function()
- local verbose = vvv.get_verbose_mode()
+    local verbose = vvv.get_verbose_mode()
     vvv.set_verbose_mode(verbose)
 
     local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
@@ -72,7 +72,8 @@ M.run_all = function()
     for _, request in ipairs(requests) do
         local env_needed = environment.env_variables_needed(request)
         if env_needed and not next(env) then
-            table.insert(results, string.format("SKIP: %s %s - Environment variables needed but not set", request.method, request.url))
+            table.insert(results,
+                string.format("SKIP: %s %s - Environment variables needed but not set", request.method, request.url))
         else
             request = parser.replace_placeholders(request, env)
             local response = http_client.send_request_sync(request)

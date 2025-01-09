@@ -1,5 +1,6 @@
 local M = {}
 local environment = require('http_client.core.environment')
+local url_u = require('http_client.utils.url')
 
 local function trim(s)
     return s:match("^%s*(.-)%s*$")
@@ -198,6 +199,9 @@ M.replace_placeholders = function(request, env)
 
     if request.url then
         request.url = replace(request.url)
+        if (url_u.needs_encoding(request.url)) then
+            request.url = url_u.encode_url(request.url)
+        end
     end
     for k, v in pairs(request.headers) do
         request.headers[k] = replace(v)

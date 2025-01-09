@@ -1,6 +1,7 @@
 local M = {}
 local curl = require('plenary.curl')
 local vvv = require('http_client.utils.verbose')
+local state = require('http_client.state')
 
 local current_request = nil
 
@@ -105,7 +106,7 @@ local function prepare_response(request, response)
         formatted_body = format_xml(formatted_body)
     end
 
-    return {
+    local pr = {
         formatted_body = formatted_body,
         headers = response.headers or {},
         status = response.status or "N/A",
@@ -118,6 +119,10 @@ local function prepare_response(request, response)
             test_name = request.test_name or "N/A",
         }
     }
+
+    state.store_response(pr)
+
+    return pr
 end
 
 local function display_response(pr)
