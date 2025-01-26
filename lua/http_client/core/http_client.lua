@@ -45,7 +45,9 @@ local function format_json(body)
         indent = indent or ""
         local newline = "\n" .. indent
 
-        if type(value) == "table" then
+        if value == vim.NIL then
+            return "null"
+        elseif type(value) == "table" then
             if vim.tbl_islist(value) then
                 local items = {}
                 for _, v in ipairs(value) do
