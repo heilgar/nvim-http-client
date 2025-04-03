@@ -27,6 +27,26 @@ M.check = function()
     else
         health.warn("telescope.nvim is not installed", "Install telescope.nvim for enhanced environment selection")
     end
+    
+    -- Check for nvim-cmp integration
+    if pcall(require, "cmp") then
+        health.ok("nvim-cmp is installed")
+        
+        -- Check if our sources are registered
+        local cmp = require("cmp")
+        local source_available = false
+        
+        -- Try to access the source (we can't directly check if registered, but we can check if our files exist)
+        if pcall(require, "http_client.completion") then
+            health.ok("HTTP Client completion module is available")
+            health.info("Using enhanced nvim-cmp autocompletion")
+        else
+            health.warn("HTTP Client completion module is not properly loaded")
+        end
+    else
+        health.info("nvim-cmp not installed, using fallback completion methods")
+        health.info("For enhanced autocompletion, install nvim-cmp")
+    end
 
     -- Check if curl is available
     local curl_check = vim.fn.system("which curl")
