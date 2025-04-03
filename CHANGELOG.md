@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] 2025-05-01
+### Added
+* Intelligent Autocompletion System
+  * Environment variable completion with `{{` trigger
+  * HTTP method completion at the start of requests
+  * HTTP header name completion with documentation
+  * Content type suggestions for Content-Type and Accept headers
+  * Adaptive filtering for better matching as you type
+  * Robust support for nvim-cmp
+  * Fallback completion for vanilla Neovim
+  * Caching system for recently used variables
+  * Context-aware completion based on cursor position
+
 ## [1.3.0] 2025-04-03
 ### Added
 * Request Profiling Capabilities

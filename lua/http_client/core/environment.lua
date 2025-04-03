@@ -104,6 +104,11 @@ M.get_global_variable = function(key)
     return global_variables[key]
 end
 
+-- Return all global variables
+M.get_global_variables = function()
+    return global_variables
+end
+
 M.env_variables_needed = function (request)
     local function check_for_placeholders(str)
         return str and str:match("{{.-}}")

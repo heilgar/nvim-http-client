@@ -261,6 +261,34 @@ a warning will be displayed in the dry run output if environment variables are
 needed but not set.
 
 ------------------------------------------------------------------------------
+AUTOCOMPLETION FEATURES                      *http_client-autocompletion*
+
+The plugin provides smart autocompletion features for .http and .rest files
+to improve the request writing experience:
+
+Environment Variable Completion                   *http_client-env-completion*
+    Type `{{` to trigger a list of available environment variables. As you type,
+    the completion list filters to match your input. Variables include:
+    - Environment variables from the current environment
+    - Global variables set by response handlers
+    - Recently used variables (persistent across files)
+
+HTTP Method Completion                         *http_client-method-completion*
+    At the beginning of a new request (after a ### divider or blank line), 
+    press <Ctrl-X><Ctrl-U> to see available HTTP methods with documentation.
+
+HTTP Header Completion                         *http_client-header-completion*
+    When starting a new line in a request, press <Ctrl-X><Ctrl-U> to get
+    completions for common HTTP headers with documentation.
+
+Content-Type Completion                   *http_client-content-type-completion*
+    After typing `Content-Type:` or `Accept:`, press <Ctrl-X><Ctrl-U> to get
+    a list of common MIME types with their descriptions.
+
+If you have nvim-cmp installed, these completions will be automatically
+integrated with it for a better user experience.
+
+------------------------------------------------------------------------------
 COMMENTS                                              *http_client-comments*
 
 The plugin now supports comments in .http and .rest files. Comments can be used

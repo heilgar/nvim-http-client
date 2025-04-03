@@ -53,6 +53,18 @@ M.setup = function(opts)
     M.dry_run = require("http_client.ui.dry_run")
     M.v = require("http_client.utils.verbose")
     M.commands = require("http_client.commands")
+    M.completion = require("http_client.completion")
+    
+    -- Initialize completion module
+    M.completion.setup()
+
+    -- Set up filetype detection
+    vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
+        pattern = {"*.http", "*.rest"},
+        callback = function()
+            vim.bo.filetype = "http"
+        end
+    })
 
     -- Set up commands
     vim.api.nvim_create_user_command("HttpEnvFile", function()
