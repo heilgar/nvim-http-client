@@ -35,6 +35,16 @@ M.check = function()
     else
         health.error("curl is not available", "Install curl")
     end
+
+    -- Check if profiling is enabled
+    local profiling_config = M.config.get('profiling')
+    if profiling_config and profiling_config.enabled then
+        health.ok('Profiling: enabled')
+    else
+        health.info('Profiling: disabled (use :HttpProfiling to enable)')
+    end
+
+    -- Check other parts of the plugin
 end
 
 return M

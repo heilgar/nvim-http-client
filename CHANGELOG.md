@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] 2025-04-03
+### Added
+* Request Profiling Capabilities
+  * Detailed timing metrics for HTTP requests
+  * DNS resolution, connection, TLS handshake, and transfer time tracking
+  * Configurable display in response window
+  * Toggle profiling with `:HttpProfiling` command
+  * New keybinding: `<leader>hp` to toggle profiling
+  * Configuration options:
+    * `profiling.enabled` - Enable/disable profiling (default: true)
+    * `profiling.show_in_response` - Show metrics in response (default: true)
+    * `profiling.detailed_metrics` - Show detailed breakdown (default: true)
+
 ## [1.2.2] 2025-26-01
 ### Fixed
 * Improved JSON response formatting

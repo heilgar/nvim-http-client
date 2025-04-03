@@ -5,6 +5,11 @@ M.defaults = {
     request_timeout = 30000, -- 30 seconds
     split_direction = "right",
     create_keybindings = true,
+    profiling = {
+        enabled = true,
+        show_in_response = true,
+        detailed_metrics = true,
+    },
     keybindings = {
         select_env_file = "<leader>hf",
         set_env = "<leader>he",
@@ -14,6 +19,7 @@ M.defaults = {
         toggle_verbose = "<leader>hv",
         copy_curl = "<leader>hc",
         save_response = "<header>hs",
+        toggle_profiling = "<leader>hp",
     },
 }
 

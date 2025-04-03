@@ -35,6 +35,7 @@ local function set_keybindings()
                 vim.keymap.set("n", keybindings.toggle_verbose, ":HttpVerbose<CR>", opts)
                 vim.keymap.set("n", keybindings.copy_curl, ":HttpCopyCurl<CR>", opts)
                 vim.keymap.set("n", keybindings.save_response, ":HttpSaveResponse<CR>", opts)
+                vim.keymap.set("n", keybindings.toggle_profiling, ":HttpProfiling<CR>", opts)
             end,
         })
     end
@@ -90,6 +91,14 @@ M.setup = function(opts)
         print(string.format("HTTP Client verbose mode %s", not current_state and "enabled" or "disabled"))
     end, {
         desc = "Toggle verbose mode for HTTP request.",
+    })
+
+    vim.api.nvim_create_user_command("HttpProfiling", function()
+        local profiling_enabled = M.config.get("profiling").enabled
+        M.config.options.profiling.enabled = not profiling_enabled
+        print(string.format("HTTP Client profiling %s", not profiling_enabled and "enabled" or "disabled"))
+    end, {
+        desc = "Toggle profiling for HTTP requests.",
     })
 
     vim.api.nvim_create_user_command("HttpDryRun", function()

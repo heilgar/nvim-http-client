@@ -2,6 +2,7 @@ local M = {}
 local curl = require('plenary.curl')
 local vvv = require('http_client.utils.verbose')
 local state = require('http_client.state')
+local profiling = require('http_client.utils.profiling')
 
 local current_request = nil
 
@@ -119,7 +120,9 @@ local function prepare_response(request, response)
             url = request.url,
             http_version = request.http_version or "N/A",
             test_name = request.test_name or "N/A",
-        }
+        },
+        request_id = request.request_id,
+        timing_metrics = response.timing_metrics or {}
     }
 
     state.store_response(pr)
@@ -129,6 +132,17 @@ end
 
 local function display_response(pr)
     local ui = require('http_client.ui.display')
+    local config = require('http_client.config')
+
+    -- Format timing metrics if available
+    local timing_str = ""
+    local profiling_config = config.get('profiling')
+    
+    if profiling_config and profiling_config.enabled and profiling_config.show_in_response then
+        if pr.timing_metrics and next(pr.timing_metrics) then
+            timing_str = "\n# Timing:\n" .. profiling.format_metrics(pr.timing_metrics)
+        end
+    end
 
     local content = string.format([[
 Response Information (%s):
@@ -137,7 +151,7 @@ Response Information (%s):
 # Status: %s
 
 # Headers:
-%s
+%s%s
 
 # Body (%s):
 %s
@@ -148,6 +162,7 @@ Response Information (%s):
         pr.request.http_version,
         pr.status,
         format_headers(pr.headers),
+        timing_str,
         pr.content_type,
         pr.formatted_body
     )
@@ -188,6 +203,17 @@ M.send_request = function(request)
         return
     end
 
+    local config = require('http_client.config')
+    local profiling_config = config.get('profiling')
+    local profiling_enabled = profiling_config and profiling_config.enabled
+
+    -- Generate request ID and add it to the request object
+    request.request_id = profiling.generate_request_id()
+    
+    if profiling_enabled then
+        profiling.start_metric(request.request_id, "total")
+    end
+
     vvv.debug_print("Headers:")
     for k, v in pairs(request.headers) do
         vvv.debug_print(string.format("  %s: %s", k, v))
@@ -210,6 +236,10 @@ M.send_request = function(request)
         body = request.body,
         headers = request.headers,
         callback = function(response)
+            if profiling_enabled then
+                profiling.end_metric(request.request_id, "total")
+            end
+            
             vvv.debug_print("Response received")
             vvv.debug_print(string.format("Status: %s", response.status))
             vvv.debug_print("Response headers:")
@@ -220,14 +250,53 @@ M.send_request = function(request)
             vvv.debug_print(response.body)
 
             current_request = nil
+            
+            if profiling_enabled then
+                response.timing_metrics = profiling.get_metrics(request.request_id)
+                response.timing_metrics.url = request.url
+                profiling.clear_metrics(request.request_id)
+            end
 
             vvv.debug_print("Calling ui.display_response")
             local pr = prepare_response(request, response)
             display_response(pr)
             handle_response(pr)
         end
-
     }
+
+    -- Add event handlers only if profiling is enabled
+    if profiling_enabled then
+        curl_options.on_start = function()
+            profiling.end_metric(request.request_id, "dns_resolution")
+            profiling.start_metric(request.request_id, "connection")
+        end
+        
+        curl_options.on_connect = function()
+            profiling.end_metric(request.request_id, "connection")
+            profiling.start_metric(request.request_id, "send_request")
+        end
+        
+        curl_options.on_first_byte = function()
+            profiling.end_metric(request.request_id, "send_request")
+            
+            -- Calculate server processing time
+            local metrics = profiling.get_metrics(request.request_id)
+            local start_time = 0
+            
+            if metrics.send_request and metrics.send_request.end_time then
+                start_time = metrics.send_request.end_time
+                
+                local server_metrics = {}
+                server_metrics.start_time = start_time
+                server_metrics.end_time = vim.loop.hrtime()
+                server_metrics.duration = (server_metrics.end_time - start_time) / 1000000
+                
+                metrics.server_processing = server_metrics
+            end
+            
+            profiling.start_metric(request.request_id, "content_transfer")
+        end
+    end
 
     -- Handle different HTTP versions
     if request.http_version then
@@ -246,11 +315,18 @@ M.send_request = function(request)
     if ssl_config.verifyHostCertificate == false then
         curl_options.insecure = true
     end
+    
+    if profiling_enabled then
+        profiling.start_metric(request.request_id, "dns_resolution")
+    end
 
     current_request = curl.request(curl_options)
 
     if not current_request then
         vvv.debug_print("Failed to initiate request")
+        if profiling_enabled then
+            profiling.clear_metrics(request.request_id)
+        end
         return
     end
 
@@ -276,6 +352,16 @@ M.get_current_request = function()
 end
 
 M.send_request_sync = function(request)
+    local config = require('http_client.config')
+    local profiling_config = config.get('profiling')
+    local profiling_enabled = profiling_config and profiling_config.enabled
+    
+    request.request_id = profiling.generate_request_id()
+    
+    if profiling_enabled then
+        profiling.start_metric(request.request_id, "total")
+    end
+    
     local response = {}
     local curl_options = {
         url = request.url,
@@ -300,8 +386,19 @@ M.send_request_sync = function(request)
     end
 
     response = curl.get(curl_options)
+    
+    if profiling_enabled then
+        profiling.end_metric(request.request_id, "total")
+        response.timing_metrics = profiling.get_metrics(request.request_id)
+        response.timing_metrics.url = request.url
+    end
+    
     local pr = prepare_response(request, response)
     handle_response(pr)
+    
+    if profiling_enabled then
+        profiling.clear_metrics(request.request_id)
+    end
 
     return response
 end

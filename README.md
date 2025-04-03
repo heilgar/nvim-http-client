@@ -17,6 +17,7 @@ The core goal is to ensure compatibility with .http files from IntelliJ or VSCod
     - [Commands](#commands)
     - [Keybindings](#keybindings)
     - [Response handler](#response-handler)
+    - [Request Profiling](#request-profiling)
 - [Telescope Integration](#telescope-integration)
 - [Documentation](#documentation)
 - [Examples](#examples)
@@ -40,6 +41,7 @@ The core goal is to ensure compatibility with .http files from IntelliJ or VSCod
 - Syntax highlighting for .http files and response buffers
 - Verbose mode for debugging
 - Dry run capability for request inspection
+- Request profiling with detailed timing metrics
 - Telescope integration for environment selection
 - Compatible with [JetBrains HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) and [VSCode Restclient](https://github.com/Huachao/vscode-restclient)
 
@@ -76,13 +78,19 @@ local http_client = require("http_client")
 local config = {
   default_env_file = '.env.json',
   request_timeout = 30000, -- 30 seconds
+  profiling = {
+    enabled = true,
+    show_in_response = true,
+    detailed_metrics = true,
+  },
   keybindings = {
     select_env_file = "<leader>hf",
     set_env = "<leader>he",
     run_request = "<leader>hr",
     stop_request = "<leader>hs",
     dry_run = "<leader>hd",
-    toggle_verbose = "<leader>hv"
+    toggle_verbose = "<leader>hv",
+    toggle_profiling = "<leader>hp"
   },
 }
 
@@ -115,6 +123,7 @@ You can adjust these settings to your preferences.
 - `:HttpRunAll`: Run all HTTP requests in the current file.
 - `:HttpStop`: Stop the currently running HTTP request.
 - `:HttpVerbose`: Toggle verbose mode for debugging.
+- `:HttpProfiling`: Toggle request profiling.
 - `:HttpDryRun`: Perform a dry run of the request under the cursor.
 - `:HttpCopyCurl`: Copy the curl command for the HTTP request under the cursor.
 
@@ -136,6 +145,7 @@ The plugin comes with the following default keybindings:
 - `<leader>hr`: Run HTTP request under cursor
 - `<leader>hx`: Stop running HTTP request
 - `<leader>hv`: Toggle verbose mode
+- `<leader>hp`: Toggle request profiling
 - `<leader>hd`: Perform dry run
 - `<leader>hc`: Copy curl command for HTTP request under cursor
 
@@ -156,6 +166,7 @@ To customize these keybindings, you can add the following to your Neovim configu
         { "<leader>hr", "<cmd>HttpRun<cr>", desc = "Run HTTP request" },
         { "<leader>hx", "<cmd>HttpStop<cr>", desc = "Stop HTTP request" },
         { "<leader>hv", "<cmd>HttpVerbose<cr>", desc = "Toggle verbose mode" },
+        { "<leader>hp", "<cmd>HttpProfiling<cr>", desc = "Toggle request profiling" },
         { "<leader>hd", "<cmd>HttpDryRun<cr>", desc = "Perform dry run" },
     },
     cmd = {
@@ -164,6 +175,7 @@ To customize these keybindings, you can add the following to your Neovim configu
         "HttpRun",
         "HttpStop",
         "HttpVerbose",
+        "HttpProfiling",
         "HttpDryRun"
     },
 }
@@ -190,6 +202,38 @@ client.global.set("auth_token", response.body.token);
 GET {{base_url}}/protected
 Authorization: Bearer {{auth_token}}
 ```
+
+### Request Profiling
+
+The plugin includes request profiling capabilities that show you detailed timing metrics for your HTTP requests. 
+
+#### Configuration
+
+You can configure profiling in your setup:
+
+```lua
+profiling = {
+  enabled = true,               -- Enable or disable profiling
+  show_in_response = true,      -- Show timing metrics in response output
+  detailed_metrics = true,      -- Show detailed breakdown of timings
+},
+```
+
+#### Viewing Timing Metrics
+
+When profiling is enabled, the response window will include a "Timing" section that shows:
+
+- Total request time
+- DNS resolution time
+- TCP connection time
+- TLS handshake time (for HTTPS requests)
+- Request sending time
+- Content transfer time
+
+#### Commands and Keybindings
+
+- `:HttpProfiling` - Toggle profiling on/off
+- `<leader>hp` - Default keybinding to toggle profiling
 
 ### Running Without Environment
 You can now run requests without selecting an environment file. If environment variables are needed but not set, the plugin will display a message suggesting to select an environment file or set properties via a response handler.
