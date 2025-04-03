@@ -27,8 +27,8 @@ Content-Type: application/json
 {
   "id": 1,
   "title": "Updated Title",
-  "body": "This is an updated post."
-  "city": {{city}}
+  "body": "This is an updated post.",
+  "city": "{{city}}"
 }
 
 ### Delete a resource

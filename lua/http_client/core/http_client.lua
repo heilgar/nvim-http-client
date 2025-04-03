@@ -158,8 +158,20 @@ end
 local function handle_response(pr)
     local response_handler = require('http_client.core.response_handler')
     if pr.response_handler then
+        local body
+        if pr.content_type == "json" then
+            local ok, decoded = pcall(vim.json.decode, pr.formatted_body)
+            if ok then
+                body = decoded
+            else
+                body = pr.formatted_body
+            end
+        else
+            body = pr.formatted_body
+        end
+
         response_handler.execute(pr.response_handler, {
-            body = vim.json.decode(pr.formatted_body),
+            body = body,
             headers = pr.headers,
             status = pr.status
         })
