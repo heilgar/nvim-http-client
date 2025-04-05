@@ -10,31 +10,17 @@ The core goal is to ensure compatibility with .http files from IntelliJ or VSCod
 
 ## Table of Contents
 
-- [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
   - [Commands](#commands)
   - [Keybindings](#keybindings)
+- [Features](#features)
+    - [Feature Comparison](#feature-comparison)
 - [Documentation](#documentation)
 - [Screenshots](#screenshots)
 - [Contributing](#contributing)
 - [License](#license)
 
-## Features
-
-- Run HTTP requests from .http files
-- Support for environment variables
-- Easy switching between different environments
-- Non-blocking requests
-- Pretty-printed response display in a separate buffer
-- Automatic formatting for JSON and XML responses
-- Syntax highlighting for .http files and response buffers
-- Verbose mode for debugging
-- Dry run capability for request inspection
-- Request profiling with detailed timing metrics
-- Telescope integration for environment selection
-- Autocompletion for HTTP methods, headers and environment variables
-- Compatible with [JetBrains HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) and [VSCode Restclient](https://github.com/Huachao/vscode-restclient)
 
 ## Installation
 
@@ -127,6 +113,62 @@ The plugin comes with the following default keybindings (if `create_keybindings`
 - `<leader>hd`: Perform dry run
 - `<leader>hc`: Copy curl command
 - `<leader>hs`: Save response to file
+
+## Features
+
+- Run HTTP requests from .http files
+- Support for environment variables
+- Easy switching between different environments
+- Non-blocking requests
+- Pretty-printed response display in a separate buffer
+- Automatic formatting for JSON and XML responses
+- Syntax highlighting for .http files and response buffers
+- Verbose mode for debugging
+- Dry run capability for request inspection
+- Request profiling with detailed timing metrics
+- Telescope integration for environment selection
+- Autocompletion for HTTP methods, headers and environment variables
+- Compatible with [JetBrains HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) and [VSCode Restclient](https://github.com/Huachao/vscode-restclient)
+
+### Feature Comparison
+
+Below is a comparison between this plugin and JetBrains HTTP Client, showing what's already implemented and what's planned for future releases:
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Basic HTTP requests | ✅ | All HTTP methods, headers, body |
+| Environment variables | ✅ | Including private env files |
+| Response formatting | ✅ | JSON, XML with syntax highlighting |
+| Post-request scripts | ✅ | Response handlers with `> {% ... %}` syntax |
+| Variable autocompletion | ✅ | Environment variables, headers, methods |
+| Request profiling | ✅ | Detailed timing metrics |
+| Response history | ✅ | Last 10 responses preserved |
+| Dry run & curl export | ✅ | Preview requests before sending |
+| Custom SSL certificate handling | ✅ | Self-signed certificate support |
+| Request chaining | ⚠️ | Basic support via global variables |
+| Authentication helpers | ⚠️ | Basic support through headers |
+| Response headers folding | ⚠️ | Basic support via Neovim folds |
+| Cookie management | ❌ | Planned |
+| Pre-request scripts | ❌ | High priority - planned |
+| File upload handling | ❌ | High priority - planned |
+| GraphQL support | ❌ | Planned |
+| Redirects configuration | ❌ | Planned |
+| WebSocket/gRPC support | ❌ | Planned |
+| Response schema validation | ❌ | Planned |
+| Response diff comparison | ❌ | Planned |
+| Request collections | ❌ | Planned |
+| Generated client code | ❌ | Planned |
+| Response testing/assertions | ❌ | Planned |
+| Proxy configuration | ❌ | Planned |
+| Request rate limiting | ❌ | Planned |
+| Batch request processing | ❌ | Planned |
+| Request signing (AWS, etc.) | ❌ | Planned |
+| OpenAPI/Swagger integration | ❌ | Planned |
+
+**Legend**:
+- ✅ = Fully implemented
+- ⚠️ = Partially implemented
+- ❌ = Not yet implemented
 
 ## Documentation
 
