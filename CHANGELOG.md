@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.4.0] 2025-05-01
+## [1.4.1] 2025-04-05
+### Improved
+* Context-aware Autocompletion System
+  * Fixed headers autocompletion in request bodies - no longer suggesting headers in the body section
+  * Improved script block detection for better completions in response handler scripts
+  * Added enhanced context detection to provide appropriate suggestions based on cursor position
+  * Added script-specific suggestions in response handler blocks (client.global.set, response.body, etc.)
+  * Maintained environment variable {{...}} completion in request bodies while disabling header suggestions
+  * Improved request body detection to properly recognize body sections
+
+## [1.4.0] 2025-04-04
 ### Added
 * Intelligent Autocompletion System
   * Environment variable completion with `{{` trigger

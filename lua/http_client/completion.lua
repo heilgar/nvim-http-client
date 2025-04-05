@@ -72,6 +72,70 @@ local function add_to_recent(var)
     end
 end
 
+-- Check if cursor is inside a response handler script block
+local function is_in_script_block()
+    local line_num = vim.api.nvim_win_get_cursor(0)[1]
+    local bufnr = vim.api.nvim_get_current_buf()
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+    
+    -- Find the start of the current block
+    local script_start = false
+    for i = 1, line_num do
+        local check_line = lines[i]
+        if check_line:match("^>%s*{%%") then
+            script_start = true
+        elseif check_line:match("^%%}") and script_start then
+            script_start = false
+        end
+    end
+    
+    -- If we've seen a script start but no end, we're in a script block
+    return script_start
+end
+
+-- Check if cursor is inside a request body
+local function is_in_request_body()
+    local line_num = vim.api.nvim_win_get_cursor(0)[1]
+    local bufnr = vim.api.nvim_get_current_buf()
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+    
+    -- Find the request line (GET, POST, etc.)
+    local request_start = 0
+    local header_end = 0
+    
+    for i = line_num, 1, -1 do
+        local check_line = lines[i]
+        
+        -- Found a separator above current position, we're not in a request
+        if check_line:match("^###") then
+            break
+        end
+        
+        -- Found a request line (e.g. "GET http://example.com")
+        if check_line:match("^%s*[A-Z]+%s+%S+") then
+            request_start = i
+            break
+        end
+    end
+    
+    if request_start == 0 then
+        return false -- Not in a request
+    end
+    
+    -- After finding the request start, look down to find where headers end
+    -- Headers end at the first empty line after the request line
+    for i = request_start + 1, line_num do
+        local check_line = lines[i]
+        if check_line:match("^%s*$") then
+            header_end = i
+            break
+        end
+    end
+    
+    -- If we found an empty line and current line is after it, we're in body
+    return header_end > 0 and line_num > header_end
+end
+
 -- Get all available variables from current environment
 local function get_env_variables()
     local env = environment.get_current_env() or {}
@@ -334,6 +398,17 @@ M.create_method_source = function()
                 return
             end
             
+            -- Check if we're inside a response handler script block
+            local in_script_block = is_in_script_block()
+            
+            -- Check if we're in a request body
+            local in_body = is_in_request_body()
+            
+            if in_script_block or in_body then
+                callback({ items = {}, isIncomplete = false })
+                return
+            end
+            
             -- Check if we're in a good context for method completion:
             -- 1. Previous line must be a ### divider, or empty line after a request
             local valid_context = false
@@ -428,7 +503,13 @@ M.create_header_source = function()
             -- Check for request line pattern (HTTP method + URL)
             local is_request_line = line:match("^%s*[A-Z]+%s+%S+") ~= nil
             
-            if is_first_line or is_request_line then
+            -- Check if we're inside a response handler script block
+            local in_script_block = is_in_script_block()
+            
+            -- Check if we're in a request body
+            local in_body = is_in_request_body()
+            
+            if is_first_line or is_request_line or in_script_block or in_body then
                 callback({ items = {}, isIncomplete = false })
                 return
             end
@@ -521,6 +602,61 @@ M.create_env_var_source = function()
         end,
         complete = function(self, request, callback)
             local cursor_before_line = request.context.cursor_before_line
+            
+            -- Check if we're inside a script block - if so, we don't provide env var completions with {{ }}
+            local in_script_block = is_in_script_block()
+            
+            -- Inside script blocks, only provide completion for script context
+            if in_script_block then
+                local items = {}
+                
+                -- Only add script-specific completions, without the {{ }} syntax
+                table.insert(items, {
+                    label = "client.global.set",
+                    kind = 3, -- Function
+                    documentation = {
+                        kind = "markdown",
+                        value = "**client.global.set(key, value)**\n\nSets a global variable that will be available in subsequent requests.\n\nExample: `client.global.set(\"token\", response.body.token);`"
+                    },
+                    insertText = "client.global.set",
+                })
+                
+                table.insert(items, {
+                    label = "response.body",
+                    kind = 6, -- Variable
+                    documentation = {
+                        kind = "markdown",
+                        value = "**response.body**\n\nThe response body (parsed as JSON if possible).\n\nExample: `const data = response.body.data;`"
+                    },
+                    insertText = "response.body",
+                })
+                
+                table.insert(items, {
+                    label = "response.headers",
+                    kind = 6, -- Variable
+                    documentation = {
+                        kind = "markdown",
+                        value = "**response.headers**\n\nThe response headers.\n\nExample: `const contentType = response.headers['content-type'];`"
+                    },
+                    insertText = "response.headers",
+                })
+                
+                table.insert(items, {
+                    label = "response.status",
+                    kind = 6, -- Variable
+                    documentation = {
+                        kind = "markdown",
+                        value = "**response.status**\n\nThe HTTP status code.\n\nExample: `if (response.status === 200) { ... }`"
+                    },
+                    insertText = "response.status",
+                })
+                
+                callback({ 
+                    items = items, 
+                    isIncomplete = true 
+                })
+                return
+            end
             
             -- Check if we're typing inside {{ but before }}
             local match_start, match_end = cursor_before_line:find("{{[^}]*$")
