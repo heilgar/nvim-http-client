@@ -163,7 +163,16 @@ Below is a comparison between this plugin and JetBrains HTTP Client, showing wha
 | Request rate limiting | ❌ | Planned |
 | Batch request processing | ❌ | Planned |
 | Request signing (AWS, etc.) | ❌ | Planned |
-| OpenAPI/Swagger integration | ❌ | Planned |
+| OpenAPI/Swagger integration | ❌ | Multiple features planned: |
+| &nbsp;&nbsp;- Direct execution from Swagger files | ❌ | **High priority** - Run requests directly from .yaml/.json OpenAPI files |
+| &nbsp;&nbsp;- Import from OpenAPI specs | ❌ | Generate .http files from spec definitions |
+| &nbsp;&nbsp;- Generate OpenAPI specs | ❌ | Create specs from existing requests |
+| &nbsp;&nbsp;- API documentation viewer | ❌ | Visualize API documentation within Neovim |
+| Postman compatibility | ❌ | Multiple features planned: |
+| &nbsp;&nbsp;- Direct execution from Postman files | ❌ | Run requests directly from Postman collection files |
+| &nbsp;&nbsp;- Import Postman collections | ❌ | Convert Postman requests to .http format |
+| &nbsp;&nbsp;- Import Postman environments | ❌ | Convert to .env.json format |
+| &nbsp;&nbsp;- Export to Postman format | ❌ | For sharing with Postman users |
 
 **Legend**:
 - ✅ = Fully implemented
