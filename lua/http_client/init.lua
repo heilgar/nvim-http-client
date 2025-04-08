@@ -68,7 +68,7 @@ M.setup = function(opts)
 
     -- Set up commands
     vim.api.nvim_create_user_command("HttpEnvFile", function()
-        M.commands.select_env.select_env_file(M.config.get())
+        M.commands.select_env.select_env_file(M.config.options)
     end, {
         desc = "Select an environment file for HTTP requests.",
     })
