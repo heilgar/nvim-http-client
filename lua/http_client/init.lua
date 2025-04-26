@@ -54,13 +54,13 @@ M.setup = function(opts)
     M.v = require("http_client.utils.verbose")
     M.commands = require("http_client.commands")
     M.completion = require("http_client.completion")
-    
+
     -- Initialize completion module
     M.completion.setup()
 
     -- Set up filetype detection
-    vim.api.nvim_create_autocmd({"BufRead", "BufNewFile"}, {
-        pattern = {"*.http", "*.rest"},
+    vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+        pattern = { "*.http", "*.rest" },
         callback = function()
             vim.bo.filetype = "http"
         end
@@ -129,6 +129,12 @@ M.setup = function(opts)
         M.commands.response.save_response()
     end, {
         desc = "Save the current HTTP response body to a file (formatted)",
+    })
+
+    vim.api.nvim_create_user_command("HttpResponseTab", function()
+        require("http_client.ui.display").open_latest_response_in_tab()
+    end, {
+        desc = "Open the latest HTTP response buffer in a new tab",
     })
 
     setup_docs()

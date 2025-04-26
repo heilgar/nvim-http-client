@@ -9,11 +9,21 @@ M.save_response = function(opts)
         return
     end
 
-    local default_ext = response.content_type == "json" and ".json"
-        or response.content_type == "xml" and ".xml"
-        or response.content_type == "html" and ".html"
-        or ".txt"
+    local function get_extension_for_content_type(content_type)
+        if content_type == "json" then
+            return ".json"
+        elseif content_type == "xml" then
+            return ".xml"
+        elseif content_type == "html" then
+            return ".html"
+        elseif content_type == "csv" then
+            return ".csv"
+        else
+            return ".txt"
+        end
+    end
 
+    local default_ext = get_extension_for_content_type(response.content_type)
     local content = opts and opts.raw and response.raw_body or response.formatted_body
 
     vim.ui.input({

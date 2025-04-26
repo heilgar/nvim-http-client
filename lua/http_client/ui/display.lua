@@ -151,5 +151,19 @@ function M.display_in_buffer(content, title)
     end)
 end
 
+function M.open_latest_response_in_tab()
+    if #buffers == 0 then
+        vim.notify("No response buffer available", vim.log.levels.WARN)
+        return
+    end
+    local buf = buffers[1]
+    if vim.api.nvim_buf_is_valid(buf) then
+        vim.cmd('tabnew')
+        vim.api.nvim_win_set_buf(0, buf)
+    else
+        vim.notify("Latest response buffer is not valid", vim.log.levels.WARN)
+    end
+end
+
 return M
 

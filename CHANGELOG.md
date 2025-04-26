@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [1.4.3] 2025-04-26
+### Added
+* Automatic file extension detection when saving responses:
+  * .json for JSON, .csv for CSV, .xml for XML, .html for HTML, .txt as fallback
+* Prettified buffer display for JSON, XML
+* New command :HttpResponseTab to open the latest response buffer in a new tab
+* Content-Type detection improved: text/csv and application/csv are now recognized as CSV
+
+### Fixed
+* Always sanitize and re-encode JSON responses to guarantee valid JSON output (for jq/jmespath/json path compatibility)
+* Fixed plugin to avoid Neovim fast event context errors by using pure Lua list detection
+
+### Improved
+* Save dialog now suggests the correct file extension based on response type
+* General robustness for malformed or double-encoded JSON from APIs
+
 ## [1.4.2] 2025-04-08
 ### Fixed
 * Fixed bug where `:HttpEnvFile` would give error saying config is nil.

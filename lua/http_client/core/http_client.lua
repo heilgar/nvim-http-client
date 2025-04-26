@@ -31,45 +31,44 @@ local function detect_content_type(headers)
             return "xml"
         elseif content_type:match("text/html") then
             return "html"
+        elseif content_type:match("text/csv") or content_type:match("application/csv") then
+            return "csv"
         end
     end
     return "text"
 end
 
+local function clean_invalid_escapes(json_str)
+    -- Remove octal/decimal escapes like \13
+    json_str = json_str:gsub("\\%d%d?%d?", "")
+    -- Remove any other invalid escapes (not one of the valid JSON escapes)
+    json_str = json_str:gsub("\\([^\"\\/bfnrtu])", "")
+    return json_str
+end
+
+local function is_list(t)
+    if type(t) ~= "table" then return false end
+    local i = 0
+    for _ in pairs(t) do
+        i = i + 1
+        if t[i] == nil then return false end
+    end
+    return true
+end
+
 local function format_json(body)
-    local ok, parsed = pcall(vim.json.decode, body)
+    local cleaned_body = clean_invalid_escapes(body)
+    local ok, parsed = pcall(vim.json.decode, cleaned_body)
     if not ok then
-        return body -- Return original body if it's not valid JSON
+        return "{}" -- Always return valid JSON
     end
-
-    local function encode_with_indent(value, indent)
-        indent = indent or ""
-        local newline = "\n" .. indent
-
-        if value == vim.NIL then
-            return "null"
-        elseif type(value) == "table" then
-            if vim.tbl_islist(value) then
-                local items = {}
-                for _, v in ipairs(value) do
-                    table.insert(items, encode_with_indent(v, indent .. "  "))
-                end
-                return "[" .. newline .. "  " .. table.concat(items, "," .. newline .. "  ") .. newline .. "]"
-            else
-                local items = {}
-                for k, v in pairs(value) do
-                    table.insert(items, string.format('%q: %s', k, encode_with_indent(v, indent .. "  ")))
-                end
-                return "{" .. newline .. "  " .. table.concat(items, "," .. newline .. "  ") .. newline .. "}"
-            end
-        elseif type(value) == "string" then
-            return string.format('%q', value)
-        else
-            return tostring(value)
-        end
+    -- Always re-encode to ensure valid JSON
+    local ok2, encoded = pcall(vim.json.encode, parsed)
+    if ok2 then
+        return encoded
+    else
+        return "{}"
     end
-
-    return encode_with_indent(parsed)
 end
 
 local function format_xml(body)
@@ -95,6 +94,70 @@ local function format_headers(headers)
         if header_key and header_value then
             table.insert(formatted, string.format("%s: %s", header_key, header_value))
         end
+    end
+    return table.concat(formatted, "\n")
+end
+
+local function prettify_json(json_str)
+    local ok, parsed = pcall(vim.json.decode, json_str)
+    if not ok then
+        return json_str -- fallback to original if not valid JSON
+    end
+    local function encode_pretty(val, indent)
+        indent = indent or ""
+        local next_indent = indent .. "  "
+        if type(val) == "table" then
+            local is_array = is_list(val)
+            local items = {}
+            if is_array then
+                for _, v in ipairs(val) do
+                    table.insert(items, encode_pretty(v, next_indent))
+                end
+                return "[\n" .. next_indent .. table.concat(items, ",\n" .. next_indent) .. "\n" .. indent .. "]"
+            else
+                for k, v in pairs(val) do
+                    table.insert(items, string.format('%q: %s', k, encode_pretty(v, next_indent)))
+                end
+                return "{\n" .. next_indent .. table.concat(items, ",\n" .. next_indent) .. "\n" .. indent .. "}"
+            end
+        elseif type(val) == "string" then
+            return string.format('%q', val)
+        else
+            return tostring(val)
+        end
+    end
+    return encode_pretty(parsed)
+end
+
+local function prettify_csv(csv_str)
+    -- Split lines
+    local lines = {}
+    for line in csv_str:gmatch("[^\r\n]+") do
+        table.insert(lines, line)
+    end
+    -- Split columns and find max width for each column
+    local columns = {}
+    for i, line in ipairs(lines) do
+        local row = {}
+        for cell in line:gmatch("([^,]+)") do
+            table.insert(row, vim.trim(cell))
+        end
+        columns[i] = row
+    end
+    local col_widths = {}
+    for _, row in ipairs(columns) do
+        for j, cell in ipairs(row) do
+            col_widths[j] = math.max(col_widths[j] or 0, #cell)
+        end
+    end
+    -- Build formatted string
+    local formatted = {}
+    for _, row in ipairs(columns) do
+        local cells = {}
+        for j, cell in ipairs(row) do
+            table.insert(cells, cell .. string.rep(' ', col_widths[j] - #cell))
+        end
+        table.insert(formatted, table.concat(cells, " | "))
     end
     return table.concat(formatted, "\n")
 end
@@ -144,6 +207,15 @@ local function display_response(pr)
         end
     end
 
+    local formatted_body = pr.formatted_body
+    if pr.content_type == "json" then
+        formatted_body = prettify_json(pr.formatted_body)
+    elseif pr.content_type == "xml" then
+        formatted_body = format_xml(pr.formatted_body)
+    elseif pr.content_type == "csv" then
+        -- formatted_body = prettify_csv(pr.formatted_body)
+    end
+
     local content = string.format([[
 Response Information (%s):
 ---------------------
@@ -164,7 +236,7 @@ Response Information (%s):
         format_headers(pr.headers),
         timing_str,
         pr.content_type,
-        pr.formatted_body
+        formatted_body
     )
 
     ui.display_in_buffer(content, "HTTP Response")
