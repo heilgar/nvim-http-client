@@ -47,6 +47,7 @@ Copy this complete configuration into your Lazy.nvim setup:
             request_timeout = 30000,
             split_direction = "right",
             create_keybindings = true,
+            user_agent = "heilgar/nvim-http-client", -- Custom User-Agent header
             
             -- Profiling (timing metrics for requests)
             profiling = {
@@ -66,6 +67,8 @@ Copy this complete configuration into your Lazy.nvim setup:
                 dry_run = "<leader>hd",
                 copy_curl = "<leader>hc",
                 save_response = "<leader>hs",
+                set_project_root = "<leader>hg",
+                get_project_root = "<leader>hgg",
             },
         })
         
@@ -99,6 +102,8 @@ For full configuration options, see [Configuration Documentation](doc/configurat
 - `:HttpDryRun`: Perform a dry run of the request under the cursor
 - `:HttpCopyCurl`: Copy the curl command for the HTTP request under the cursor
 - `:HttpSaveResponse`: Save the response body to a file
+- `:HttpSetProjectRoot [path]`: Set the project root for file searching operations (use without arguments to be prompted for the path)
+- `:HttpGetProjectRoot`: Display the current project root for file searching operations
 
 ### Keybindings
 
@@ -113,6 +118,8 @@ The plugin comes with the following default keybindings (if `create_keybindings`
 - `<leader>hd`: Perform dry run
 - `<leader>hc`: Copy curl command
 - `<leader>hs`: Save response to file
+- `<leader>hg`: Set project root for file searching
+- `<leader>hpg`: Get current project root
 
 ## Features
 
@@ -128,6 +135,7 @@ The plugin comes with the following default keybindings (if `create_keybindings`
 - Request profiling with detailed timing metrics
 - Telescope integration for environment selection
 - Autocompletion for HTTP methods, headers and environment variables
+- Custom User-Agent header (`heilgar/nvim-http-client` by default)
 - Compatible with [JetBrains HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) and [VSCode Restclient](https://github.com/Huachao/vscode-restclient)
 
 ### Feature Comparison

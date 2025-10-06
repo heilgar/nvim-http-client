@@ -45,7 +45,8 @@ Within a response handler, you have access to:
 
 - `response` - The HTTP response object
   - `response.body` - The response body (parsed as JSON if possible)
-  - `response.headers` - Response headers
+  - `response.headers` - Response headers object with additional methods
+    - `response.headers.valueOf(headerName)` - Get header value with case-insensitive lookup
   - `response.status` - HTTP status code
 
 - `client` - The HTTP client object
@@ -100,6 +101,36 @@ if (adminUser) {
 ### Get Admin Details
 GET {{host}}/api/users/{{adminId}}
 ```
+
+### Example: Extracting Headers
+
+```http
+### Login with Session
+POST {{host}}/api/login
+Content-Type: application/json
+
+{
+    "username": "{{username}}",
+    "password": "{{password}}"
+}
+
+> {%
+// Extract session ID from response headers using valueOf
+const sessionId = response.headers.valueOf("mcp-session-id");
+if (sessionId) {
+    client.global.set("session-id", sessionId);
+    console.log("Session ID extracted: " + sessionId);
+} else {
+    console.log("No session ID found in response headers");
+}
+%}
+
+### Use Session in Next Request
+GET {{host}}/api/protected
+X-Session-ID: {{session-id}}
+```
+
+**Note:** The `valueOf` method provides case-insensitive header lookup, so `response.headers.valueOf("mcp-session-id")` will work even if the actual header is `MCP-Session-ID` or `Mcp-Session-Id`.
 
 ## Saving Responses
 

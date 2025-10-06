@@ -36,6 +36,8 @@ local function set_keybindings()
                 vim.keymap.set("n", keybindings.copy_curl, ":HttpCopyCurl<CR>", opts)
                 vim.keymap.set("n", keybindings.save_response, ":HttpSaveResponse<CR>", opts)
                 vim.keymap.set("n", keybindings.toggle_profiling, ":HttpProfiling<CR>", opts)
+                vim.keymap.set("n", keybindings.set_project_root, ":HttpSetProjectRoot<CR>", opts)
+                vim.keymap.set("n", keybindings.get_project_root, ":HttpGetProjectRoot<CR>", opts)
             end,
         })
     end
@@ -137,6 +139,25 @@ M.setup = function(opts)
         desc = "Open the latest HTTP response buffer in a new tab",
     })
 
+    vim.api.nvim_create_user_command("HttpSetProjectRoot", function(opts)
+        M.commands.utils.set_project_root(opts.args)
+    end, {
+        desc = "Set the project root for file searching operations. Use without arguments to be prompted for the path.",
+        nargs = "?",
+    })
+
+    vim.api.nvim_create_user_command("HttpGetProjectRoot", function()
+        M.commands.utils.get_project_root()
+    end, {
+        desc = "Display the current project root for file searching operations.",
+    })
+
+    vim.api.nvim_create_user_command("HttpDebugEnv", function()
+        M.commands.utils.debug_env()
+    end, {
+        desc = "Debug environment and project root settings.",
+    })
+
     setup_docs()
     set_keybindings()
 
@@ -145,12 +166,12 @@ M.setup = function(opts)
     local health = vim.health or M.health
     if health.register then
         -- Register the health check with the new API
-        health.register("http_client", M.health.check)
+                health.register("http_client", M.health.check)
     else
         -- Fallback for older Neovim versions
         vim.api.nvim_create_autocmd("VimEnter", {
             callback = function()
-                M.health.check()
+                                M.health.check()
             end,
         })
     end

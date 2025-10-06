@@ -1,23 +1,47 @@
 local M = {}
 local Path = require('plenary.path')
 
-M.find_files = function(pattern)
-    local handle = io.popen('find . -name "' .. pattern .. '"')
+-- Store the project root globally
+M.project_root = vim.fn.getcwd()
+
+M.set_project_root = function(root_path)
+    if root_path then
+        M.project_root = root_path
+    else
+        M.project_root = vim.fn.getcwd()
+    end
+end
+
+M.get_project_root = function()
+    return M.project_root
+end
+
+M.find_files = function(pattern, project_root)
+    local search_root = project_root or M.project_root
+    
+    local handle = io.popen('find "' .. search_root .. '" -name "' .. pattern .. '"')
     local result = handle:read("*a")
     handle:close()
 
     local files = {}
     for file in result:gmatch("[^\r\n]+") do
-        local filename = file:sub(3) -- remove './' from the beginning
+        -- Remove the search root prefix from the file path
+        local filename = file:sub(#search_root + 2) -- +2 to remove the '/' after the root
         -- Exclude files with ".private." in their name
         if not filename:match("%.private%.") then
             table.insert(files, filename)
         end
     end
+    
     return files
 end
 
 M.read_json_file = function(file_path)
+    -- If the path is relative, make it absolute using the project root
+    if not file_path:match("^/") then
+        file_path = M.project_root .. "/" .. file_path
+    end
+    
     local file = io.open(file_path, "r")
     if not file then return nil end
 

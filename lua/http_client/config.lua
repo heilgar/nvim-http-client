@@ -5,6 +5,7 @@ M.defaults = {
     request_timeout = 30000, -- 30 seconds
     split_direction = "right",
     create_keybindings = true,
+    user_agent = "heilgar/nvim-http-client", -- Default User-Agent header
     profiling = {
         enabled = true,
         show_in_response = true,
@@ -18,8 +19,10 @@ M.defaults = {
         dry_run = "<leader>hd",
         toggle_verbose = "<leader>hv",
         copy_curl = "<leader>hc",
-        save_response = "<header>hs",
+        save_response = "<leader>hs",
         toggle_profiling = "<leader>hp",
+        set_project_root = "<leader>hg",
+        get_project_root = "<leader>hgg",
     },
 }
 

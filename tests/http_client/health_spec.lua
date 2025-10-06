@@ -69,6 +69,7 @@ describe("http_client health checks", function()
     it("reports profiling status when disabled", function()
         stub(_G, "pcall")
         _G.pcall.on_call_with(require, "plenary").returns(true)
+        _G.pcall.on_call_with(require, "cmp").returns(false)  -- Mock cmp not installed
         
         -- Override config for this test
         health.config.get = function(option)
