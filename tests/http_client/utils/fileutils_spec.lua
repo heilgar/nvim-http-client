@@ -28,6 +28,7 @@ describe("file_utils", function()
             local files = file_utils.find_files("*.json")
             table.sort(files)
             assert.are.same({
+                ".releaserc.json",
                 "examples/.env.json",
                 "test_dir/subdir/test3.json",
                 "test_dir/test1.json",

@@ -7,6 +7,11 @@ local current_env = {}
 local global_variables = {}
 
 M.set_env_file = function(file_path)
+    -- If the path is relative, make it absolute using the project root
+    if not file_path:match("^/") then
+        file_path = file_utils.get_project_root() .. "/" .. file_path
+    end
+
     current_env_file = file_path
     -- Set the private environment file path
     current_private_env_file = file_path:gsub("%.env%.json$", ".private.env.json")
@@ -109,7 +114,7 @@ M.get_global_variables = function()
     return global_variables
 end
 
-M.env_variables_needed = function (request)
+M.env_variables_needed = function(request)
     local function check_for_placeholders(str)
         return str and str:match("{{.-}}")
     end
@@ -132,4 +137,3 @@ M.env_variables_needed = function (request)
 end
 
 return M
-

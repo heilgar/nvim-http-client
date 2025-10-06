@@ -160,6 +160,15 @@ M.parse_request = function(lines)
 
     request.response_handler = response_handler
 
+    -- Add default User-Agent header if not present
+    if not request.headers['User-Agent'] and not request.headers['user-agent'] then
+        local config = require('http_client.config')
+        local user_agent = config.get('user_agent')
+        if user_agent then
+            request.headers['User-Agent'] = user_agent
+        end
+    end
+
     return request
 end
 

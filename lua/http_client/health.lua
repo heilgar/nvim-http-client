@@ -1,8 +1,13 @@
 local health = vim.health or require("health")
+local config = require("http_client.config")
 
 local M = {}
 
 M.check = function()
+    local cfg = M.config or config
+    if cfg.setup then
+        cfg.setup()
+    end
     health.start("http_client")
 
     -- Check if required dependencies are available
@@ -57,7 +62,7 @@ M.check = function()
     end
 
     -- Check if profiling is enabled
-    local profiling_config = M.config.get('profiling')
+    local profiling_config = cfg.get('profiling')
     if profiling_config and profiling_config.enabled then
         health.ok('Profiling: enabled')
     else

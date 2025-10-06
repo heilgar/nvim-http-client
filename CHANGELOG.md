@@ -6,6 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [1.4.4] 2025-09-10
+### Added
+* Project root management for file searching operations:
+  * New command `:HttpSetProjectRoot [path]` to set the project root for file searching
+  * New command `:HttpGetProjectRoot` to display the current project root
+  * New command `:HttpDebugEnv` to debug environment and project root settings
+  * New keybindings: `<leader>hg` to set project root, `<leader>hgg` to get project root
+  * Enhanced `find_files` function to accept optional project root parameter
+  * Automatic fallback to current directory when no project root is set
+  * Relative path handling for environment files using project root
+* Custom User-Agent header support:
+  * Automatic User-Agent header (`heilgar/nvim-http-client`) added to all requests
+  * Configurable via `user_agent` option in setup 
+  * Only added if no User-Agent header is explicitly set in the request
+* Enhanced response handler features:
+  * Added `response.headers.valueOf(headerName)` method for case-insensitive header lookup
+  * Improved header parsing to handle different formats from plenary.curl
+  * Better header object creation with support for both array and key-value formats
+
+### Fixed
+* Fixed keybinding typo in configuration (corrected `<header>hs` to `<leader>hs`)
+* Improved health check initialization to properly load configuration
+* Enhanced environment file path handling for relative paths
+
 ## [1.4.3] 2025-04-26
 ### Added
 * Automatic file extension detection when saving responses:
@@ -259,4 +283,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Notes
 - The plugin requires Neovim 0.5 or later
 - Dependencies: plenary.nvim, telescope.nvim (optional for enhanced environment selection)
-
+1
