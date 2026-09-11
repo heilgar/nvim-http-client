@@ -1,2 +1,4 @@
 .idea
 
+# Local development certificates for examples/server (see generate-cert.sh)
+*.pem

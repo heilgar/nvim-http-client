@@ -69,14 +69,18 @@ httpServer.listen(port, () => {
     console.log(`HTTP/1.1 server running on http://localhost:${port}`);
 });
 
-const http2Server = http2.createSecureServer({
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
-}, (req, res) => {
-    requestHandler(req, res);
-});
+if (fs.existsSync('key.pem') && fs.existsSync('cert.pem')) {
+    const http2Server = http2.createSecureServer({
+        key: fs.readFileSync('key.pem'),
+        cert: fs.readFileSync('cert.pem')
+    }, (req, res) => {
+        requestHandler(req, res);
+    });
 
-http2Server.listen(port + 1, () => {
-    console.log(`HTTP/2 server running on https://localhost:${port + 1}`);
-});
+    http2Server.listen(port + 1, () => {
+        console.log(`HTTP/2 server running on https://localhost:${port + 1}`);
+    });
+} else {
+    console.log('HTTP/2 server skipped - run ./generate-cert.sh to enable it.');
+}
 
