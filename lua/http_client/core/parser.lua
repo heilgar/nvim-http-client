@@ -140,13 +140,17 @@ M.parse_request = function(lines)
             end
         elseif stage == "headers" then
             line = remove_comment(line)
-            local key, value = line:match("^([^:]+):%s*(.+)$")
-            if key and value then
-                key = trim(key)
-                value = remove_comment(value)
-                value = trim(value)
-                if value ~= "" then
-                    request.headers[key] = value
+            if request.url and not next(request.headers) and line:match("^[?&]") then -- multiline query params
+                request.url = request.url .. line
+            else
+                local key, value = line:match("^([^:]+):%s*(.+)$")
+                if key and value then
+                    key = trim(key)
+                    value = remove_comment(value)
+                    value = trim(value)
+                    if value ~= "" then
+                        request.headers[key] = value
+                    end
                 end
             end
         elseif stage == "body" then

@@ -193,6 +193,31 @@ describe("Parser", function()
             }, request)
         end)
 
+        it("should support multiline query parameters", function()
+            local lines = {
+                "GET https://api.example.com/users",
+                "  ?page=1",
+                "  &limit=10",
+                "Host: example.com",
+                ""
+            }
+            local request = parser.parse_request(lines)
+            assert.are.equal("https://api.example.com/users?page=1&limit=10", request.url)
+            assert.are.equal("example.com", request.headers.Host)
+        end)
+
+        it("should stop treating query-looking lines as URL continuations after a header", function()
+            local lines = {
+                "GET https://api.example.com/users",
+                "Host: example.com",
+                "&not_a_query: value",
+                ""
+            }
+            local request = parser.parse_request(lines)
+            assert.are.equal("https://api.example.com/users", request.url)
+            assert.are.equal("value", request.headers["&not_a_query"])
+        end)
+
         it("should handle comment on header line", function()
             local lines = {
                 "GET https://test.com/",
