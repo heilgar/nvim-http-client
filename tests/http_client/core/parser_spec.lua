@@ -314,6 +314,57 @@ describe("Parser", function()
             assert.are.equal(replaced_request.headers.Host, "http://example.com")
             assert.are.equal(replaced_request.body, "Body with http://example.com")
         end)
+
+        describe("Basic authentication", function()
+            -- base64("my-id:my-secret")
+            local encoded = "bXktaWQ6bXktc2VjcmV0"
+
+            it("should encode `Basic <user> <password>` like the JetBrains HTTP Client", function()
+                local request = { url = "/token", headers = { Authorization = "Basic my-id my-secret" } }
+
+                local replaced = parser.replace_placeholders(request, {})
+                assert.are.equal("Basic " .. encoded, replaced.headers.Authorization)
+            end)
+
+            it("should encode after the placeholders are replaced", function()
+                local env = { clientId = "my-id", clientSecret = "my-secret" }
+                local request = { url = "/token", headers = { Authorization = "Basic {{clientId}} {{clientSecret}}" } }
+
+                local replaced = parser.replace_placeholders(request, env)
+                assert.are.equal("Basic " .. encoded, replaced.headers.Authorization)
+            end)
+
+            it("should match the header name case-insensitively", function()
+                local request = { url = "/token", headers = { authorization = "Basic my-id my-secret" } }
+
+                local replaced = parser.replace_placeholders(request, {})
+                assert.are.equal("Basic " .. encoded, replaced.headers.authorization)
+            end)
+
+            it("should not touch an already encoded credential", function()
+                local request = { url = "/token", headers = { Authorization = "Basic " .. encoded } }
+
+                local replaced = parser.replace_placeholders(request, {})
+                assert.are.equal("Basic " .. encoded, replaced.headers.Authorization)
+            end)
+
+            it("should not touch other authentication schemes", function()
+                local request = { url = "/token", headers = { Authorization = "Bearer abc def" } }
+
+                local replaced = parser.replace_placeholders(request, {})
+                assert.are.equal("Bearer abc def", replaced.headers.Authorization)
+            end)
+
+            it("should keep the other headers", function()
+                local request = {
+                    url = "/token",
+                    headers = { Authorization = "Basic my-id my-secret", Accept = "application/json" },
+                }
+
+                local replaced = parser.replace_placeholders(request, {})
+                assert.are.equal("application/json", replaced.headers.Accept)
+            end)
+        end)
     end)
 end)
 
