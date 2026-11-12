@@ -196,6 +196,20 @@ M.parse_all_requests = function(lines)
     return requests
 end
 
+-- JetBrains HTTP Client accepts `Authorization: Basic <user> <password>` and sends `Basic base64(user:password)`.
+-- Only the two-word form is converted: a single word is already an encoded credential, and other schemes
+-- (Bearer, Digest, ...) are left alone.
+local function encode_basic_auth(headers)
+    for name, value in pairs(headers) do
+        if name:lower() == "authorization" then
+            local user, password = value:match("^Basic%s+(%S+)%s+(%S+)%s*$")
+            if user then
+                headers[name] = "Basic " .. vim.base64.encode(user .. ":" .. password)
+            end
+        end
+    end
+end
+
 M.replace_placeholders = function(request, env)
     local function replace(str)
         if str == nil then
@@ -215,6 +229,8 @@ M.replace_placeholders = function(request, env)
     for k, v in pairs(request.headers) do
         request.headers[k] = replace(v)
     end
+    -- after the placeholders are filled in, so `Basic {{user}} {{password}}` works
+    encode_basic_auth(request.headers)
     if request.body then
         request.body = replace(request.body)
     end

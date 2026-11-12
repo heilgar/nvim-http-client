@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [Unreleased] 2026-11-12
+### Added
+* `Authorization: Basic <user> <password>` is converted to `Basic base64(user:password)`, like the JetBrains HTTP Client does.
+  Works with environment variables (`Basic {{clientId}} {{clientSecret}}`). A single, already encoded credential and other
+  schemes (Bearer, Digest, ...) are sent unchanged.
+
 ## [1.4.4] 2025-09-10
 ### Added
 * Project root management for file searching operations:
