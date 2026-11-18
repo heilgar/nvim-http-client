@@ -74,6 +74,22 @@ Environment variables can be used in:
 - Headers
 - Request bodies
 
+### Basic authentication
+
+As in the JetBrains HTTP Client, `Authorization: Basic` accepts the user and the password as two words. The plugin
+encodes them as `base64(user:password)` after the variables are replaced:
+
+```http
+### Get a token
+POST {{host}}/oauth2/token
+Authorization: Basic {{clientId}} {{clientSecret}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+```
+
+A value that is already encoded (`Authorization: Basic dXNlcjpwYXNz`) is sent as it is.
+
 ## Selecting Environments
 
 ### Commands
