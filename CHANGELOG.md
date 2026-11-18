@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Works with environment variables (`Basic {{clientId}} {{clientSecret}}`). A single, already encoded credential and other
   schemes (Bearer, Digest, ...) are sent unchanged.
 
+## [1.5.4] 2026-10-16
+### Added
+* Multiline query parameters.
+ 
 ## [1.4.4] 2025-09-10
 ### Added
 * Project root management for file searching operations:
@@ -61,7 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Context-aware Autocompletion System
   * Fixed headers autocompletion in request bodies - no longer suggesting headers in the body section
   * Improved script block detection for better completions in response handler scripts
-  * Added enhanced context detection to provide appropriate suggestions based on cursor position
+
   * Added script-specific suggestions in response handler blocks (client.global.set, response.body, etc.)
   * Maintained environment variable {{...}} completion in request bodies while disabling header suggestions
   * Improved request body detection to properly recognize body sections
